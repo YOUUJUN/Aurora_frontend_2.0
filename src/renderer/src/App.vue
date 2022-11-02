@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CustomTitleBar from '@renderer/components/Root/CustomTitleBar.vue'
-// import SideNav from '@renderer/components/Root/SideNav.vue'
-// import Bg from '@renderer/components/Root/Bg.vue'
+import SideNav from '@renderer/components/Root/SideNav.vue'
+import Bg from '@renderer/components/Root/Bg.vue'
 
 import { computed } from 'vue'
 import { useSettingStore } from '@renderer/store/modules/setting'
@@ -21,7 +21,7 @@ const accentColor = computed(() => settingStore.accentColor)
 
 		<main class="main-wrap">
 			<aside class="left-panel-wrap">
-				<!-- <SideNav /> -->
+				<SideNav />
 			</aside>
 
 			<article class="article-wrap">
@@ -31,7 +31,7 @@ const accentColor = computed(() => settingStore.accentColor)
 
 		<footer></footer>
 
-		<!-- <Bg></Bg> -->
+		<Bg></Bg>
 	</article>
 </template>
 

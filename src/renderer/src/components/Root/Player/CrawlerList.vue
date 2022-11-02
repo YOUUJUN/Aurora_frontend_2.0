@@ -28,7 +28,7 @@ function goTo(target: any): void {
 
                     <a-card hoverable style="width: 300px" @click="goTo('/Crawler/BuffCrawler')">
                         <template #cover>
-                            <img alt="example" src="@/RendererProcess/assets/images/template/judy.jpg" />
+                            <img alt="example" src="@renderer/assets/images/template/judy.jpg" />
                         </template>
                         <template #actions>
                             <a-button @click.stop="sayHi()">
@@ -43,7 +43,7 @@ function goTo(target: any): void {
                         </template>
                         <a-card-meta title="Buff Crawler" description="This is the description">
                             <template #avatar>
-                                <a-avatar src="@/RendererProcess/assets/images/template/youjun.jpg" />
+                                <a-avatar src="@renderer/assets/images/template/judy.jpg" />
                             </template>
                         </a-card-meta>
                     </a-card>
