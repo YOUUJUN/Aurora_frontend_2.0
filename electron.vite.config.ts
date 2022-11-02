@@ -2,6 +2,11 @@ import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
 
+//Element-plus 按需引入
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+
 function pathResolve(dir: string) {
 	return resolve(process.cwd(), '.', dir)
 }
@@ -17,11 +22,20 @@ export default defineConfig({
 		resolve: {
 			alias: {
 				'@renderer': resolve('src/renderer/src'),
-				'#renderer' : resolve('src/renderer/types'),
-				'@' : resolve('src'),
-				
+				'#renderer': resolve('src/renderer/types'),
+				'@': resolve('src'),
 			},
 		},
-		plugins: [vue()],
+		plugins: [
+			vue(),
+
+			//Element-plus 按需引入
+			AutoImport({
+				resolvers : [ElementPlusResolver()],
+			}),
+			Components({
+				resolvers : [ElementPlusResolver()],
+			})
+		],
 	},
 })

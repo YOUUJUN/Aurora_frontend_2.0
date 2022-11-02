@@ -17,6 +17,7 @@
       "#renderer/*": [
         "src/renderer/types/*"
       ]
-    }
+    },
+    "types": ["element-plus/global"]
   }
 }
