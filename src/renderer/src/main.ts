@@ -1,4 +1,16 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
-createApp(App).mount('#app')
+import { setupStore } from '@renderer/store'
+
+async function bootstrap() {
+	const app = createApp(App)
+
+	// Configure store
+	// 配置 store
+	setupStore(app)
+
+	app.mount('#app')
+}
+
+bootstrap()

@@ -1,110 +1,99 @@
 <script setup lang="ts">
-import Versions from './components/Versions.vue'
+import CustomTitleBar from '@renderer/components/Root/CustomTitleBar.vue'
+// import SideNav from '@renderer/components/Root/SideNav.vue'
+// import Bg from '@renderer/components/Root/Bg.vue'
+
+import { computed } from 'vue'
+import { useSettingStore } from '@renderer/store/modules/setting'
+
+const settingStore = useSettingStore();
+
+const theme = computed(() => settingStore.theme)
+const accentColor = computed(() => settingStore.accentColor)
+
 </script>
 
 <template>
-	<Versions></Versions>
+	<article class="container light_theme">
+		<header class="header-wrap">
+			<CustomTitleBar />
+		</header>
 
-	<svg class="hero-logo" viewBox="0 0 900 300">
-		<use xlink:href="./assets/icons.svg#electron" />
-	</svg>
-	<h2 class="hero-text">You've successfully created an Electron project with Vue and TypeScript</h2>
-	<p class="hero-tagline">
-		Please try pressing
-		<code>F12</code>
-		to open the devTool
-	</p>
+		<main class="main-wrap">
+			<aside class="left-panel-wrap">
+				<!-- <SideNav /> -->
+			</aside>
 
-	<div class="links">
-		<div class="link-item">
-			<a target="_blank" href="https://evite.netlify.app">Documentation</a>
-		</div>
-		<div class="link-item link-dot">•</div>
-		<div class="link-item">
-			<a target="_blank" href="https://github.com/alex8088/electron-vite">Getting Help</a>
-		</div>
-		<div class="link-item link-dot">•</div>
-		<div class="link-item">
-			<a target="_blank" href="https://github.com/alex8088/quick-start/tree/master/packages/create-electron">
-				create-electron
-			</a>
-		</div>
-	</div>
+			<article class="article-wrap">
+				<router-view />
+			</article>
+		</main>
 
-	<div class="features">
-		<div class="feature-item">
-			<article>
-				<h2 class="title">Configuring</h2>
-				<p class="detail">
-					Config with
-					<span>electron.vite.config.ts</span>
-					and refer to the
-					<a target="_blank" href="https://evite.netlify.app/config/">config guide</a>
-					.
-				</p>
-			</article>
-		</div>
-		<div class="feature-item">
-			<article>
-				<h2 class="title">HMR</h2>
-				<p class="detail">
-					Edit
-					<span>src/renderer</span>
-					files to test HMR. See
-					<a target="_blank" href="https://evite.netlify.app/guide/hmr-in-renderer.html">docs</a>
-					.
-				</p>
-			</article>
-		</div>
-		<div class="feature-item">
-			<article>
-				<h2 class="title">Hot Reloading</h2>
-				<p class="detail">
-					Run
-					<span>'electron-vite dev --watch'</span>
-					to enable. See
-					<a target="_blank" href="https://evite.netlify.app/guide/hot-reloading.html">docs</a>
-					.
-				</p>
-			</article>
-		</div>
-		<div class="feature-item">
-			<article>
-				<h2 class="title">Debugging</h2>
-				<p class="detail">
-					Check out
-					<span>.vscode/launch.json</span>
-					. See
-					<a target="_blank" href="https://evite.netlify.app/guide/debugging.html">docs</a>
-					.
-				</p>
-			</article>
-		</div>
-		<div class="feature-item">
-			<article>
-				<h2 class="title">Source Code Protection</h2>
-				<p class="detail">
-					Supported via built-in plugin
-					<span>bytecodePlugin</span>
-					. See
-					<a target="_blank" href="https://evite.netlify.app/guide/source-code-protection.html">docs</a>
-					.
-				</p>
-			</article>
-		</div>
-		<div class="feature-item">
-			<article>
-				<h2 class="title">Packaging</h2>
-				<p class="detail">
-					Use
-					<a target="_blank" href="https://www.electron.build">electron-builder</a>
-					and pre-configured to pack your app.
-				</p>
-			</article>
-		</div>
-	</div>
+		<footer></footer>
+
+		<!-- <Bg></Bg> -->
+	</article>
 </template>
 
-<style lang="less">
-@import './assets/css/styles.less';
+<script lang="ts">
+export default {
+	data() {
+		return {}
+	},
+}
+</script>
+<style scoped>
+@import '@renderer/styles/theme/themer.css';
+@import '@renderer/styles/theme/utilityClasses.css';
+
+* {
+	scroll-behavior: smooth;
+	box-sizing: border-box;
+}
+
+body {
+	height: 100vh;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
+
+button {
+	-webkit-app-region: no-drag;
+}
+
+#app {
+	height: 100vh;
+	background: rgb(8, 8, 8);
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.header-wrap {}
+
+.main-wrap {
+	display: flex;
+	height: 100vh;
+	flex-direction: row;
+	padding: 10px;
+	gap: 10px;
+}
+
+.left-panel-wrap {
+	position: relative;
+	flex: 0;
+	display: flex;
+	flex-direction: column;
+	width: 220px;
+	min-width: 220px;
+}
+
+.article-wrap {
+	position: relative;
+	flex: 1;
+}
 </style>
