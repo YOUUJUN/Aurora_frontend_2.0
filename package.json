@@ -17,8 +17,11 @@
 		"build:linux": "npm run build && electron-builder --linux --config"
 	},
 	"dependencies": {
+		"@ant-design/icons-vue": "^6.1.0",
 		"@electron-toolkit/preload": "^1.0.2",
 		"@electron-toolkit/utils": "^1.0.2",
+		"@element-plus/icons-vue": "^2.0.10",
+		"ant-design-vue": "^3.2.13",
 		"electron-updater": "^4.6.5",
 		"element-plus": "^2.2.19",
 		"pinia": "^2.0.23",

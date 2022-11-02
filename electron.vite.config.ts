@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 //Element-plus 按需引入
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { ElementPlusResolver, AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 
 function pathResolve(dir: string) {
 	return resolve(process.cwd(), '.', dir)
@@ -29,13 +29,13 @@ export default defineConfig({
 		plugins: [
 			vue(),
 
-			//Element-plus 按需引入
+			//Element-plus, ant-design-vue 按需引入
 			AutoImport({
-				resolvers : [ElementPlusResolver()],
+				resolvers : [ElementPlusResolver(), AntDesignVueResolver()],
 			}),
 			Components({
-				resolvers : [ElementPlusResolver()],
-			})
+				resolvers : [ElementPlusResolver(), AntDesignVueResolver()],
+			}),
 		],
 	},
 })

@@ -7,6 +7,7 @@
     "src/renderer/src/**/*.vue",
     "src/preload/*.d.ts"
   ],
+  "exclude": ["node_modules", "out", "build", "**/*.js"],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
@@ -16,6 +17,9 @@
       ],
       "#renderer/*": [
         "src/renderer/types/*"
+      ],
+      "@/*":[
+        "src/*"
       ]
     },
     "types": ["element-plus/global"]

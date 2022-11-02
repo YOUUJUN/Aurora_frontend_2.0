@@ -1,9 +1,9 @@
-import type {APP} from 'vue'
+import type {App} from 'vue'
 
 import {createRouter, createWebHistory} from "vue-router";
 
-import Home from "../views/Home.vue";
-import UserCenter from "../components/Root/Player/UserCenter.vue";
+import Home from "@renderer/views/Home.vue";
+import UserCenter from '@renderer/components/Root/Player/UserCenter.vue'
 import CrawlerList from "../components/Root/Player/CrawlerList.vue";
 import Crawler from "../views/Crawler.vue";
 import BuffCrawler from "../components/Extra/BuffCrawler.vue";
@@ -50,6 +50,6 @@ export const router = createRouter({
 })
 
 
-export function setupRouter(app:APP<Element>){
+export function setupRouter(app:App<Element>){
     app.use(router)
 }
