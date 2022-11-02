@@ -1,6 +1,4 @@
-# electron-app
-
-An Electron application with Vue and TypesSript
+# Aurora_frontend_2.0
 
 ## Recommended IDE Setup
 
