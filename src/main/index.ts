@@ -2,10 +2,12 @@ import { app, shell, BrowserWindow } from 'electron'
 import * as path from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
+import { setupIpcMainListener } from './lib/ipcListener'
+
 function createWindow(): void {
 	// Create the browser window.
 	const mainWindow = new BrowserWindow({
-		frame : true,
+		frame: true,
 		width: 900,
 		height: 670,
 		show: false,
@@ -37,6 +39,9 @@ function createWindow(): void {
 	} else {
 		mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
 	}
+
+	//设置windows原生窗体操作监听
+	setupIpcMainListener(mainWindow)
 }
 
 // This method will be called when Electron has finished
