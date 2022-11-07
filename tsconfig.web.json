@@ -2,6 +2,7 @@
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
     "src/renderer/src/env.d.ts",
+    "src/renderer/src/*",
     "src/renderer/src/**/*",
     "src/renderer/types/*",
     "src/renderer/src/**/*.vue",
@@ -22,6 +23,8 @@
         "src/*"
       ]
     },
-    "types": ["element-plus/global"]
+    "types": ["element-plus/global"],
+    "noUnusedParameters": false,
+    "noUnusedLocals" : false,
   }
 }

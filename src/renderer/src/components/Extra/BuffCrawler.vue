@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
-import type {TbuffData} from '#renderer/buffCrawler'
-
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { message, Modal } from 'ant-design-vue'
 
@@ -10,6 +8,8 @@ import { errorCaptured } from '@renderer/utils/help'
 
 import { ref, reactive, createVNode } from 'vue';
 const { ipcRenderer } = window.electron
+
+import {postActionLocal} from '@renderer/api/manage'
 
 const originTargetKeys = [];
 
@@ -98,7 +98,7 @@ const rightColumns = ref(rightTableColumns);
 
 
 /*--buff--*/
-const buffData:Ref<TbuffData> = ref([]);
+const buffData: Ref<Array<any>> = ref([]);
 const serverStatus = ref("default");
 const serverStatusText = ref("closed");
 const serverStartTime = ref("");
@@ -184,7 +184,7 @@ const startBuffCrawler = (info) => {
 		icon: createVNode(ExclamationCircleOutlined),
 		content: "该操作会在后台启动 pm2 buffCrawler 服务",
 		onOk() {
-			return new Promise((resolve, reject) => {
+			return new Promise<void>((resolve, reject) => {
 				console.log('-------------------lalalalalla');
 				sendMessageToNode(command);
 
@@ -211,7 +211,7 @@ const stopBuffCrawler = () => {
 		icon: createVNode(ExclamationCircleOutlined),
 		content: "该操作会关闭后台 pm2 buffCrawler 服务",
 		onOk() {
-			return new Promise((resolve, reject) => {
+			return new Promise<void>((resolve, reject) => {
 				sendMessageToNode("stopBuffCrawler");
 				ipcRenderer.once("stopBuffCrawlerFailed", (e, payload) => {
 					message.error("服务启动失败!");
@@ -233,7 +233,7 @@ const reStartBuffCrawler = () => {
 		icon: createVNode(ExclamationCircleOutlined),
 		content: "该操作会重启后台 pm2 buffCrawler 服务",
 		onOk() {
-			return new Promise((resolve, reject) => {
+			return new Promise<void>((resolve, reject) => {
 				sendMessageToNode("reStartBuffCrawler");
 				ipcRenderer.once("startBuffCrawlerFailed", (e, payload) => {
 					message.error("服务启动失败!");
@@ -253,14 +253,14 @@ const reStartBuffCrawler = () => {
 };
 
 const connectSocket = () => {
-	console.log('connecting socket server=====>');
-	if (socket.value) {
-		return socket;
-	}
+	// console.log('connecting socket server=====>');
+	// if (socket.value) {
+	// 	return socket;
+	// }
 
-	socket = io.connect('ws://localhost:8888/');
+	// socket = io.connect('ws://localhost:8888/');
 
-	return socket;
+	// return socket;
 }
 
 
@@ -481,7 +481,7 @@ export default {
 				title,
 				icon: createVNode(ExclamationCircleOutlined),
 				onOk() {
-					return new Promise((resolve, reject) => {
+					return new Promise<void>((resolve, reject) => {
 						action().then(() => {
 							resolve();
 						});
@@ -494,12 +494,7 @@ export default {
 
 		/*---buff service qpi---*/
 		async actBuff() {
-			let [err, msg] = await errorCaptured(this.$http2, {
-				url: "/actBuff",
-				method: "POST",
-			});
-
-
+			let [err, msg] = await errorCaptured(postActionLocal, '/actBuff');
 			if (msg) {
 				message.success(msg.data.message);
 			}
