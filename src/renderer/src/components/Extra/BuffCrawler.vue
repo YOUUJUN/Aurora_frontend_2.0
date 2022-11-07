@@ -7,7 +7,8 @@ import { sendMessageToNode } from '@renderer/utils';
 import { errorCaptured } from '@renderer/utils/help'
 
 import { ref, reactive, createVNode } from 'vue';
-const { ipcRenderer } = window.electron
+const { ipcRenderer } = window.electron;
+
 
 import {postActionLocal} from '@renderer/api/manage'
 
@@ -90,7 +91,7 @@ const endPage = ref(2);
 const tokenInfo = ref("");
 
 /*--data transfer--*/
-const targetKeys = ref(originTargetKeys);
+const targetKeys: Ref<any[]> = ref(originTargetKeys);
 const disabled = ref(false);
 const showSearch = ref(true);
 const leftColumns = ref(leftTableColumns);
@@ -98,7 +99,7 @@ const rightColumns = ref(rightTableColumns);
 
 
 /*--buff--*/
-const buffData: Ref<Array<any>> = ref([]);
+const buffData: Ref<any[]> = ref([]);
 const serverStatus = ref("default");
 const serverStatusText = ref("closed");
 const serverStartTime = ref("");
@@ -122,12 +123,12 @@ const cancel = (key) => {
 };
 
 const onChange = (nextTargetKeys, direction, moveKeys) => {
-	// console.log("nextTargetKeys", nextTargetKeys);
-	// let rightData = [];
-	// console.log("buffData", buffData);
-	// for (let i = 0; i < nextTargetKeys.length; i++) {
-	// 	rightData.push(buffData._rawValue[nextTargetKeys[i]]);
-	// }
+	console.log("nextTargetKeys", nextTargetKeys);
+	let rightData: any[] = [];
+	console.log("buffData", buffData);
+	for (let i = 0; i < nextTargetKeys.length; i++) {
+		rightData.push(buffData.value[nextTargetKeys[i]]);
+	}
 };
 
 const getRowSelection = ({
@@ -169,8 +170,6 @@ ipcRenderer.on("buffCrawlerClosing", (e, payload) => {
 	serverEndTime.value = new Date().toLocaleString();
 	message.success("服务关闭成功!");
 });
-
-let socket = ref(null);
 
 const startBuffCrawler = (info) => {
 	let command = "";
@@ -253,14 +252,14 @@ const reStartBuffCrawler = () => {
 };
 
 const connectSocket = () => {
-	// console.log('connecting socket server=====>');
-	// if (socket.value) {
-	// 	return socket;
-	// }
+	console.log('connecting socket server=====>');
+	if (socket.value) {
+		return socket;
+	}
 
-	// socket = io.connect('ws://localhost:8888/');
+	socket = io.connect('ws://localhost:8888/');
 
-	// return socket;
+	return socket;
 }
 
 
@@ -273,6 +272,10 @@ defineExpose({
 	tokenInfo,
 	buffData,
 	targetKeys,
+
+	actPage,
+	endPage,
+
 });
 
 
@@ -443,6 +446,7 @@ defineExpose({
 export default {
 	data() {
 		return {
+
 		};
 	},
 
@@ -501,21 +505,13 @@ export default {
 		},
 
 		async actPageBuff() {
-			let [err, msg] = await errorCaptured(this.$http2, {
-				url: "/actBuff",
-				method: "POST",
-				data: {
-					startPage: this.actPage,
-					endPage: this.endPage
-				},
+			let [err, msg] = await errorCaptured(postActionLocal, '/actBuff', {
+				startPage: this.actPage,
+				endPage: this.endPage
 			});
 
 			let socket = io(wsUrl);
 			socket.once('endLoop', (payload) => {
-				// console.log('payload', payload);
-				// new Notification(`通知！！！`, { 
-				//     body: `本次循环任务已经完成！` 
-				// });   
 				sendMessageToNode("notifyLoopEnd");
 			})
 
@@ -525,10 +521,7 @@ export default {
 		},
 
 		async stopBuff() {
-			let [err, msg] = await errorCaptured(this.$http2, {
-				url: "/stopBuff",
-				method: "POST",
-			});
+			let [err, msg] = await errorCaptured(postActionLocal, '/stopBuff');
 
 			if (msg) {
 				message.success(msg.data.message);
@@ -536,10 +529,7 @@ export default {
 		},
 
 		async clearBuff() {
-			let [err, msg] = await errorCaptured(this.$http2, {
-				url: "/clearBuff",
-				method: "POST",
-			});
+			let [err, msg] = await errorCaptured(postActionLocal, '/clearBuff');
 
 			if (msg) {
 				message.success(msg.data.message);
@@ -547,10 +537,7 @@ export default {
 		},
 
 		async gatherBuff() {
-			let [err, msg] = await errorCaptured(this.$http2, {
-				url: "/gatherBuff",
-				method: "POST",
-			});
+			let [err, msg] = await errorCaptured(postActionLocal, '/gatherBuff');
 
 			if (msg) {
 				this.processBuffData(msg.data.data);
@@ -566,10 +553,7 @@ export default {
 		},
 
 		async actBuffHistoryPrices() {
-			let [err, msg] = await errorCaptured(this.$http2, {
-				url: "/actBuffHistoryPrices",
-				method: "POST",
-			});
+			let [err, msg] = await errorCaptured(postActionLocal, '/actBuffHistoryPrices');
 
 			if (msg) {
 				message.success(msg.data.message);
@@ -577,10 +561,7 @@ export default {
 		},
 
 		async stopBuffHistoryPrices() {
-			let [err, msg] = await errorCaptured(this.$http2, {
-				url: "/stopBuffHistoryPrices",
-				method: "POST",
-			});
+			let [err, msg] = await errorCaptured(postActionLocal, '/stopBuffHistoryPrices');
 
 			if (msg) {
 				message.success(msg.data.message);
@@ -588,10 +569,7 @@ export default {
 		},
 
 		async historyBuff() {
-			let [err, msg] = await errorCaptured(this.$http2, {
-				url: "/getBuffHistoryPrices",
-				method: "POST",
-			});
+			let [err, msg] = await errorCaptured(postActionLocal, '/getBuffHistoryPrices');
 
 			if (msg) {
 				this.processBuffData(msg.data.data);
@@ -650,7 +628,7 @@ export default {
 				return;
 			}
 
-			let rightData = [];
+			let rightData: any[] = [];
 			for (let i = 0; i < targetKeys.length; i++) {
 				console.log(targetKeys[i]);
 				rightData.push(buffData[targetKeys[i]]);
@@ -658,13 +636,9 @@ export default {
 
 			console.log("rightData", rightData);
 
-			let [err, msg] = await errorCaptured(this.$http2, {
-				url: "/saveSteamPurchase",
-				method: "POST",
-				data: {
-					goods: rightData,
-					buy_time: new Date().getTime(),
-				},
+			let [err, msg] = await errorCaptured(postActionLocal, '/saveSteamPurchase', {
+				goods: rightData,
+				buy_time: new Date().getTime(),
 			});
 
 			if (msg) {
@@ -688,21 +662,18 @@ export default {
 				return;
 			}
 
-			let rightData = [];
+			let rightData: any[] = [];
 			for (let i = 0; i < targetKeys.length; i++) {
 				rightData.push(buffData[targetKeys[i]]);
 			}
 
 			console.log("rightData", rightData);
 
-			let [err, msg] = await errorCaptured(this.$http2, {
-				url: "/saveBufffPurchase",
-				method: "POST",
-				data: {
-					goods: rightData,
-					buy_time: new Date().getTime(),
-				},
+			let [err, msg] = await errorCaptured(postActionLocal, '/saveBufffPurchase', {
+				goods: rightData,
+				buy_time: new Date().getTime(),
 			});
+
 
 			if (msg) {
 				if (msg.data.status == 1) {
@@ -720,12 +691,9 @@ export default {
 		/*---updateToken---*/
 		async upDateLogInfo() {
 			let token = this.tokenInfo.trim();
-			let [err, msg] = await errorCaptured(this.$http2, {
-				url: "/updateLogInfo",
-				method: "POST",
-				data: {
-					token,
-				},
+
+			let [err, msg] = await errorCaptured(postActionLocal, '/updateLogInfo', {
+				token,
 			});
 
 			if (msg) {
