@@ -6,7 +6,7 @@ import { FullScreen, Close, Minus } from '@element-plus/icons-vue'
 </script>
 <template>
 
-    <div class="customTitleBar bg1">
+    <div class="customTitleBar">
 
         <div class="leftSide">
             <p>侦察姬</p>
@@ -14,9 +14,9 @@ import { FullScreen, Close, Minus } from '@element-plus/icons-vue'
 
         <div class="rightSide">
 
-            <div class="user-wrap">
+            <!-- <div class="user-wrap">
 
-                <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" size="small">
+                <el-avatar src="@renderer/assets/images/template/rainbow.png" size="small">
                 </el-avatar>
 
             </div>
@@ -32,7 +32,7 @@ import { FullScreen, Close, Minus } from '@element-plus/icons-vue'
                     </el-button>
                 </el-button-group>
 
-            </div>
+            </div> -->
 
         </div>
 
@@ -56,6 +56,7 @@ export default {
     align-items: center;
     padding: 5px 10px 5px 20px;
     width: 100%;
+    height: 100%;
     -webkit-app-region: drag;
 }
 

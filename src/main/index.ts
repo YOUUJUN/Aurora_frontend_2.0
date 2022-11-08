@@ -11,7 +11,15 @@ function createWindow(): void {
 		width: 900,
 		height: 670,
 		show: false,
-		autoHideMenuBar: true,
+		// titleBarStyle : 'hidden', //是否显示windows/mac标准标题栏
+		titleBarOverlay : {
+			// color : 'rgba(0, 0, 0, 0)',
+			// color : '#f3eadf',
+			color : '#f0f0f0',
+			symbolColor:'black',
+			height : 45,
+		},
+		autoHideMenuBar: false, //自动隐藏菜单栏
 		...(process.platform === 'linux'
 			? {
 					icon: path.join(__dirname, '../../build/icon.png'),

@@ -14,7 +14,7 @@ const accentColor = computed(() => settingStore.accentColor)
 </script>
 
 <template>
-	<article class="container light_theme">
+	<article class="container light_theme" id="wrap">
 		<header class="header-wrap">
 			<CustomTitleBar />
 		</header>
@@ -42,9 +42,10 @@ export default {
 	},
 }
 </script>
+
+
+
 <style scoped>
-@import '@renderer/styles/theme/themer.css';
-@import '@renderer/styles/theme/utilityClasses.css';
 
 * {
 	scroll-behavior: smooth;
@@ -73,7 +74,14 @@ button {
 	height: 100%;
 }
 
-.header-wrap {}
+.header-wrap {
+	position: fixed;
+	top:0;
+	height: 45px;
+	width: 100%;
+	background-color: #f0f0f0;
+	z-index: 9999;
+}
 
 .main-wrap {
 	display: flex;
@@ -81,6 +89,7 @@ button {
 	flex-direction: row;
 	padding: 10px;
 	gap: 10px;
+	padding-top: 55px;
 }
 
 .left-panel-wrap {
@@ -96,4 +105,9 @@ button {
 	position: relative;
 	flex: 1;
 }
+</style>
+
+<style>
+	@import '@renderer/styles/theme/themer.css';
+	@import '@renderer/styles/theme/utilityClasses.css';
 </style>

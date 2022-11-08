@@ -43,7 +43,7 @@ function goTo(target: any): void {
                         </template>
                         <a-card-meta title="Buff Crawler" description="This is the description">
                             <template #avatar>
-                                <a-avatar src="@renderer/assets/images/template/judy.jpg" />
+                                <a-avatar src="@renderer/assets/images/template/rainbow.png" />
                             </template>
                         </a-card-meta>
                     </a-card>

@@ -16,12 +16,15 @@ defineExpose({
 
 <template>
 
-    <section class="container">
-        <el-drawer custom-class="Setting blurred_bg blur40 bg2" modal-class="Setting-model" v-model="drawer"
-            title="I am the title" direction="btt" size="auto">
-            <span>Hi, there!</span>
-        </el-drawer>
-    </section>
+    <Teleport to="body">
+        <section class="container light_theme">
+            <el-drawer custom-class="Setting blurred_bg blur80 bg4" modal-class="Setting-model" v-model="drawer"
+                title="I am the title" direction="btt" size="auto">
+                <span>Hi, there!</span>
+            </el-drawer>
+        </section>
+    </teleport>
+
 
 </template>
 
@@ -35,6 +38,7 @@ export default {
 </script>
 
 <style scoped>
+
 .container {
     padding: 10px;
 }

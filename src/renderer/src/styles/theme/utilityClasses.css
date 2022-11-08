@@ -10,6 +10,9 @@
 .blurred_bg.blur40 {
     backdrop-filter: blur(40px);
 }
+.blurred_bg.blur80 {
+    backdrop-filter: blur(80px);
+}
 
 
 .bg1 {
