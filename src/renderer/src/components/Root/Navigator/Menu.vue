@@ -87,7 +87,7 @@ export default {
 </script>
 
 <style scoped>
-:deep(.el-menu) {
+.Menu :deep(.el-menu) {
     background-color: inherit;
 }
 

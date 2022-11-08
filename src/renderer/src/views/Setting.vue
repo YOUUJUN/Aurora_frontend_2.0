@@ -39,11 +39,11 @@ export default {
     padding: 10px;
 }
 
-.container:deep(.el-drawer) {
+.container :deep(.el-drawer) {
     background-color: unset;
 }
 
-.container:deep(.Setting) {
+.container :deep(.Setting) {
     top: 10px;
     bottom: 10px;
     left: 10px;
@@ -54,7 +54,7 @@ export default {
     border-radius: 20px;
 }
 
-.container:deep(.Setting-model) {
+.container :deep(.Setting-model) {
     top: 40px;
     height: auto;
 }

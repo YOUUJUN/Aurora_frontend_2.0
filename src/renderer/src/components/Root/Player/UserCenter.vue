@@ -56,7 +56,7 @@ export default {
 </script>
 
 <style scoped>
-:deep(.el-tabs__nav-wrap::after) {
+.main :deep(.el-tabs__nav-wrap::after) {
     background-color: inherit;
 }
 

@@ -713,5 +713,48 @@ export default {
 </script>
 
 <style scoped>
+.BuffCrawler {
+	border-radius: 20px;
+	height: 100%;
+	overflow: hidden;
+}
 
+.title {
+	padding: 15px 25px;
+	margin-bottom: 10px;
+	border-radius: 20px;
+}
+
+.title h2 {
+	font-size: 18px;
+	margin: 0;
+}
+
+.status-panel {
+	padding: 15px 25px;
+	margin-bottom: 10px;
+	border-radius: 20px;
+}
+
+.ctrlPanel {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 15px 25px;
+	margin-bottom: 10px;
+	border-radius: 20px;
+}
+
+.data-panel {
+	padding: 15px;
+	border-radius: 20px;
+}
+
+/*--右边穿梭框--*/
+
+.rightTable {
+	width: 640px;
+}
 </style>
