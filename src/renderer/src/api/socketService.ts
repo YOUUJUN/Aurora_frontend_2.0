@@ -1,8 +1,15 @@
+export interface TsocketInstance {
+    connect : (url?:string) => void,
+    registerCallBack : (alia:string, callback) => void,
+    unRegisterCallBack : (alia:string) => void,
+    send : (alia:any) => void,
+}
+
 const wsURL = `ws://localhost:8888/`;
 
 export default class SocketService {
     //socket 单例
-    static instance;
+    static instance:TsocketInstance;
     static get Instance() {
         if (!this.instance) {
             this.instance = new SocketService();
@@ -26,7 +33,8 @@ export default class SocketService {
     connectRetryCount = 0;
 
     //连接方法
-    connect() {
+    connect(url?:string) {
+        url = url || wsURL
         if (!window.WebSocket) {
             console.log("您的浏览器不支持WebSocket");
             return;

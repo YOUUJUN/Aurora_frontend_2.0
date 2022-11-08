@@ -1,5 +1,4 @@
-import request from "@renderer/utils/localhttp";
-
+import request from '@renderer/utils/localhttp'
 export function postActionLocal(url:string, parameter){
     return request({
         url,
@@ -7,7 +6,6 @@ export function postActionLocal(url:string, parameter){
         data: parameter,
     });
 }
-
 
 export function getActionLocal(url:string, parameter) {
     return request({

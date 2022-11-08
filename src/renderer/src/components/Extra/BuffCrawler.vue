@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
+
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { message, Modal } from 'ant-design-vue'
 
@@ -7,10 +8,11 @@ import { sendMessageToNode } from '@renderer/utils';
 import { errorCaptured } from '@renderer/utils/help'
 
 import { ref, reactive, createVNode } from 'vue';
+
+import { postActionLocal } from '@renderer/api/manage'
+import SocketService from '@renderer/api/socketService'
+
 const { ipcRenderer } = window.electron;
-
-
-import {postActionLocal} from '@renderer/api/manage'
 
 const originTargetKeys = [];
 
@@ -252,14 +254,14 @@ const reStartBuffCrawler = () => {
 };
 
 const connectSocket = () => {
-	console.log('connecting socket server=====>');
-	if (socket.value) {
-		return socket;
-	}
-
-	socket = io.connect('ws://localhost:8888/');
-
-	return socket;
+	SocketService.Instance.connect();
+	let socket = SocketService.Instance;
+	socket.registerCallBack('endLoop', (payload) => {
+		if (payload === 'endLoop') {
+			sendMessageToNode("notifyLoopEnd");
+		}
+	})
+	return SocketService.Instance;
 }
 
 
@@ -268,7 +270,6 @@ const getBuffCrawlerLog = () => {
 };
 
 defineExpose({
-	socket,
 	tokenInfo,
 	buffData,
 	targetKeys,
@@ -509,11 +510,6 @@ export default {
 				startPage: this.actPage,
 				endPage: this.endPage
 			});
-
-			let socket = io(wsUrl);
-			socket.once('endLoop', (payload) => {
-				sendMessageToNode("notifyLoopEnd");
-			})
 
 			if (msg) {
 				message.success(msg.data.message);
