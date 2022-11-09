@@ -12,7 +12,7 @@ const route = useRoute()
 			</keep-alive>
 
 			<template v-if="!route.meta.keepAlive">
-				<component v-if="!route.meta.keepAlive" :is="Component" />
+				<component :is="Component" v-if="!route.meta.keepAlive" />
 			</template>
 		</router-view>
 	</section>

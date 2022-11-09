@@ -13,7 +13,7 @@ const accentColor = computed(() => settingStore.accentColor)
 </script>
 
 <template>
-	<article class="container light_theme" id="wrap">
+	<article id="wrap" class="container light_theme">
 		<header class="header-wrap">
 			<CustomTitleBar />
 		</header>

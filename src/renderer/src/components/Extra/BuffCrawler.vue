@@ -119,7 +119,7 @@ const cancel = (key) => {
 
 const onChange = (nextTargetKeys, direction, moveKeys) => {
 	console.log('nextTargetKeys', nextTargetKeys)
-	let rightData: any[] = []
+	const rightData: any[] = []
 	console.log('buffData', buffData)
 	for (let i = 0; i < nextTargetKeys.length; i++) {
 		rightData.push(buffData.value[nextTargetKeys[i]])
@@ -241,7 +241,7 @@ const reStartBuffCrawler = () => {
 
 const connectSocket = () => {
 	SocketService.Instance.connect()
-	let socket = SocketService.Instance
+	const socket = SocketService.Instance
 	socket.registerCallBack('endLoop', (payload) => {
 		if (payload === 'endLoop') {
 			sendMessageToNode('notifyLoopEnd')
@@ -356,7 +356,6 @@ defineExpose({
 							onItemSelectAll,
 							onItemSelect,
 						}"
-						class="ok"
 					>
 						<a-table
 							:row-selection="
@@ -435,7 +434,7 @@ export default {
 	methods: {
 		confirmAction(action) {
 			let title = ''
-			let funcName = action.name.split(' ').pop()
+			const funcName = action.name.split(' ').pop()
 			switch (funcName) {
 				case 'actBuff':
 					title = '是否启动BUFF爬虫?'
@@ -480,14 +479,14 @@ export default {
 
 		/*---buff service qpi---*/
 		async actBuff() {
-			let [err, msg] = await errorCaptured(postActionLocal, '/actBuff')
+			const [err, msg] = await errorCaptured(postActionLocal, '/actBuff')
 			if (msg) {
 				message.success(msg.data.message)
 			}
 		},
 
 		async actPageBuff() {
-			let [err, msg] = await errorCaptured(postActionLocal, '/actBuff', {
+			const [err, msg] = await errorCaptured(postActionLocal, '/actBuff', {
 				startPage: this.actPage,
 				endPage: this.endPage,
 			})
@@ -498,7 +497,7 @@ export default {
 		},
 
 		async stopBuff() {
-			let [err, msg] = await errorCaptured(postActionLocal, '/stopBuff')
+			const [err, msg] = await errorCaptured(postActionLocal, '/stopBuff')
 
 			if (msg) {
 				message.success(msg.data.message)
@@ -506,7 +505,7 @@ export default {
 		},
 
 		async clearBuff() {
-			let [err, msg] = await errorCaptured(postActionLocal, '/clearBuff')
+			const [err, msg] = await errorCaptured(postActionLocal, '/clearBuff')
 
 			if (msg) {
 				message.success(msg.data.message)
@@ -514,7 +513,7 @@ export default {
 		},
 
 		async gatherBuff() {
-			let [err, msg] = await errorCaptured(postActionLocal, '/gatherBuff')
+			const [err, msg] = await errorCaptured(postActionLocal, '/gatherBuff')
 
 			if (msg) {
 				this.processBuffData(msg.data.data)
@@ -530,7 +529,7 @@ export default {
 		},
 
 		async actBuffHistoryPrices() {
-			let [err, msg] = await errorCaptured(postActionLocal, '/actBuffHistoryPrices')
+			const [err, msg] = await errorCaptured(postActionLocal, '/actBuffHistoryPrices')
 
 			if (msg) {
 				message.success(msg.data.message)
@@ -538,7 +537,7 @@ export default {
 		},
 
 		async stopBuffHistoryPrices() {
-			let [err, msg] = await errorCaptured(postActionLocal, '/stopBuffHistoryPrices')
+			const [err, msg] = await errorCaptured(postActionLocal, '/stopBuffHistoryPrices')
 
 			if (msg) {
 				message.success(msg.data.message)
@@ -546,7 +545,7 @@ export default {
 		},
 
 		async historyBuff() {
-			let [err, msg] = await errorCaptured(postActionLocal, '/getBuffHistoryPrices')
+			const [err, msg] = await errorCaptured(postActionLocal, '/getBuffHistoryPrices')
 
 			if (msg) {
 				this.processBuffData(msg.data.data)
@@ -561,7 +560,7 @@ export default {
 		/*------*/
 		processBuffData(buffData) {
 			for (let i = 0; i < buffData.length; i++) {
-				let data = buffData[i]
+				const data = buffData[i]
 				this.buffData.push({
 					key: i.toString(),
 					name: data.name,
@@ -596,14 +595,14 @@ export default {
 		/*---transfer footer---*/
 
 		async saveToSteam() {
-			let targetKeys = this.targetKeys
-			let buffData = this.buffData
+			const targetKeys = this.targetKeys
+			const buffData = this.buffData
 
 			if (!targetKeys) {
 				return
 			}
 
-			let rightData: any[] = []
+			const rightData: any[] = []
 			for (let i = 0; i < targetKeys.length; i++) {
 				console.log(targetKeys[i])
 				rightData.push(buffData[targetKeys[i]])
@@ -611,7 +610,7 @@ export default {
 
 			console.log('rightData', rightData)
 
-			let [err, msg] = await errorCaptured(postActionLocal, '/saveSteamPurchase', {
+			const [err, msg] = await errorCaptured(postActionLocal, '/saveSteamPurchase', {
 				goods: rightData,
 				buy_time: new Date().getTime(),
 			})
@@ -630,21 +629,21 @@ export default {
 		},
 
 		async saveToBuff() {
-			let targetKeys = this.targetKeys
-			let buffData = this.buffData
+			const targetKeys = this.targetKeys
+			const buffData = this.buffData
 
 			if (!targetKeys) {
 				return
 			}
 
-			let rightData: any[] = []
+			const rightData: any[] = []
 			for (let i = 0; i < targetKeys.length; i++) {
 				rightData.push(buffData[targetKeys[i]])
 			}
 
 			console.log('rightData', rightData)
 
-			let [err, msg] = await errorCaptured(postActionLocal, '/saveBufffPurchase', {
+			const [err, msg] = await errorCaptured(postActionLocal, '/saveBufffPurchase', {
 				goods: rightData,
 				buy_time: new Date().getTime(),
 			})
@@ -664,9 +663,9 @@ export default {
 
 		/*---updateToken---*/
 		async upDateLogInfo() {
-			let token = this.tokenInfo.trim()
+			const token = this.tokenInfo.trim()
 
-			let [err, msg] = await errorCaptured(postActionLocal, '/updateLogInfo', {
+			const [err, msg] = await errorCaptured(postActionLocal, '/updateLogInfo', {
 				token,
 			})
 

@@ -8,7 +8,7 @@
 
 export async function errorCaptured(asyncFunc, ...params: any[]) {
 	try {
-		let res = await asyncFunc(...params)
+		const res = await asyncFunc(...params)
 		return [null, res]
 	} catch (e) {
 		return [e, null]

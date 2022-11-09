@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-let drawer = ref(false)
+const drawer = ref(false)
 
 function openSetting() {
 	console.log('ok')
@@ -17,9 +17,9 @@ defineExpose({
 	<Teleport to="body">
 		<section class="container light_theme">
 			<el-drawer
+				v-model="drawer"
 				custom-class="Setting blurred_bg blur80 bg4"
 				modal-class="Setting-model"
-				v-model="drawer"
 				title="I am the title"
 				direction="btt"
 				size="auto"
