@@ -67,4 +67,48 @@ export default {
 
 <style scoped>
 
+    .Crawler{
+        position: absolute;
+        top:0;
+        bottom:0;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .title{
+        flex:0;
+        padding:15px 25px;
+        margin-bottom:10px;
+        border-radius: 20px;
+    }
+
+    .title h2{
+        font-size: 18px;
+        margin:0;
+    }
+
+    .panel-wrap{
+        position: relative;
+        flex: 1;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .panel{
+        position: absolute;
+        top:0;
+        bottom:0;
+        width: 100%;
+    }
+
+    .cards-wrap{
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding:30px;
+    }
+
 </style>
