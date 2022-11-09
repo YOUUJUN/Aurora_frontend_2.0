@@ -6,11 +6,10 @@ import Bg from '@renderer/components/Root/Bg.vue'
 import { computed } from 'vue'
 import { useSettingStore } from '@renderer/store/modules/setting'
 
-const settingStore = useSettingStore();
+const settingStore = useSettingStore()
 
 const theme = computed(() => settingStore.theme)
 const accentColor = computed(() => settingStore.accentColor)
-
 </script>
 
 <template>
@@ -43,10 +42,7 @@ export default {
 }
 </script>
 
-
-
 <style scoped>
-
 * {
 	scroll-behavior: smooth;
 	box-sizing: border-box;
@@ -76,7 +72,7 @@ button {
 
 .header-wrap {
 	position: fixed;
-	top:0;
+	top: 0;
 	height: 45px;
 	width: 100%;
 	background-color: #f0f0f0;
@@ -108,6 +104,6 @@ button {
 </style>
 
 <style>
-	@import '@renderer/styles/theme/themer.css';
-	@import '@renderer/styles/theme/utilityClasses.css';
+@import '@renderer/styles/theme/themer.css';
+@import '@renderer/styles/theme/utilityClasses.css';
 </style>

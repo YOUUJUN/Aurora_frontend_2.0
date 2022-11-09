@@ -12,12 +12,12 @@ function createWindow(): void {
 		height: 670,
 		show: false,
 		// titleBarStyle : 'hidden', //是否显示windows/mac标准标题栏
-		titleBarOverlay : {
+		titleBarOverlay: {
 			// color : 'rgba(0, 0, 0, 0)',
 			// color : '#f3eadf',
-			color : '#f0f0f0',
-			symbolColor:'black',
-			height : 45,
+			color: '#f0f0f0',
+			symbolColor: 'black',
+			height: 45,
 		},
 		autoHideMenuBar: false, //自动隐藏菜单栏
 		...(process.platform === 'linux'

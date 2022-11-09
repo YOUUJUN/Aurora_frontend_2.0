@@ -6,7 +6,7 @@
  * @returns {Promise<*[]>}
  */
 
-export async function errorCaptured(asyncFunc, ...params:any[]) {
+export async function errorCaptured(asyncFunc, ...params: any[]) {
 	try {
 		let res = await asyncFunc(...params)
 		return [null, res]

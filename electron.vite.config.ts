@@ -31,10 +31,10 @@ export default defineConfig({
 
 			//Element-plus, ant-design-vue 按需引入
 			AutoImport({
-				resolvers : [ElementPlusResolver(), AntDesignVueResolver()],
+				resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
 			}),
 			Components({
-				resolvers : [ElementPlusResolver(), AntDesignVueResolver()],
+				resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
 			}),
 		],
 	},

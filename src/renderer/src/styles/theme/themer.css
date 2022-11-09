@@ -1,48 +1,44 @@
 .accent_0 {
-    --accentColor: #0066ff;
+	--accentColor: #0066ff;
 }
 .accent_1 {
-    --accentColor: #7a86cb;
+	--accentColor: #7a86cb;
 }
 .accent_2 {
-    --accentColor: #ba68c6;
+	--accentColor: #ba68c6;
 }
 .accent_3 {
-    --accentColor: #fd8b64;
+	--accentColor: #fd8b64;
 }
 .accent_4 {
-    --accentColor: #acd580;
+	--accentColor: #acd580;
 }
 .accent_5 {
-    --accentColor: #fcd450;
+	--accentColor: #fcd450;
 }
 .accent_6 {
-    --accentColor: #4db6ac;
+	--accentColor: #4db6ac;
 }
 .accent_7 {
-    --accentColor: #ee6390;
+	--accentColor: #ee6390;
 }
 .accent_8 {
-    --accentColor: #e57375;
+	--accentColor: #e57375;
 }
 .accent_9 {
-    --accentColor: #ff8a66;
+	--accentColor: #ff8a66;
 }
 
 :root {
-    --v1: #be91c6;
-    --v2: #8a65cc;
-    --v3: #5e30d9;
-    --transparentv3: #5e30d900;
-    --v4: #3b1895;
-    --s1: #fea798;
-    --s2: #ff846e;
-    --cloud: #fea798;
+	--v1: #be91c6;
+	--v2: #8a65cc;
+	--v3: #5e30d9;
+	--transparentv3: #5e30d900;
+	--v4: #3b1895;
+	--s1: #fea798;
+	--s2: #ff846e;
+	--cloud: #fea798;
 }
-
-
-
-
 
 .fancy_theme p,
 .fancy_theme h1,
@@ -52,113 +48,113 @@
 .fancy_theme div,
 .fancy_theme a,
 .fancy_theme pre {
-    color: white;
+	color: white;
 }
 
 .dark_theme .bg1 {
-    background: rgb(17, 17, 17);
+	background: rgb(17, 17, 17);
 }
 .dark_theme .bg2 {
-    background: rgb(14, 14, 14);
+	background: rgb(14, 14, 14);
 }
 .dark_theme .blurred_bg {
-    background: rgb(26, 26, 26) !important;
+	background: rgb(26, 26, 26) !important;
 }
 .dark_theme .trackOptions {
-    background: rgb(17, 17, 17) !important;
+	background: rgb(17, 17, 17) !important;
 }
 .dark_theme .PlaylistCard {
-    background: rgba(26, 26, 26, 0.301) !important;
+	background: rgba(26, 26, 26, 0.301) !important;
 }
 .dark_theme .sliverBar #blurred {
-    display: none !important;
+	display: none !important;
 }
 .dark_theme .sliverBarFooter {
-    background: transparent;
+	background: transparent;
 }
 
 .black_theme .bg1 {
-    background: rgb(5, 5, 5);
+	background: rgb(5, 5, 5);
 }
 .black_theme .bg2 {
-    background: rgb(8, 8, 8);
+	background: rgb(8, 8, 8);
 }
 .black_theme .blurred_bg {
-    background: rgb(8, 8, 8) !important;
+	background: rgb(8, 8, 8) !important;
 }
 .black_theme .PlaylistCard {
-    background: rgb(8, 8, 8) !important;
+	background: rgb(8, 8, 8) !important;
 }
 .black_theme .sliverBar #blurred {
-    display: none !important;
+	display: none !important;
 }
 .black_theme .sliverBarFooter {
-    background: transparent;
+	background: transparent;
 }
 
 .light_theme {
-    background: rgb(243, 243, 243) !important;
+	background: rgb(243, 243, 243) !important;
 }
 .light_theme p {
-    color: black;
+	color: black;
 }
 .light_theme button {
-    color: black;
+	color: black;
 }
 .light_theme h1 {
-    color: black;
+	color: black;
 }
 .light_theme h2 {
-    color: black;
+	color: black;
 }
 .light_theme h3 {
-    color: black;
+	color: black;
 }
 .light_theme div {
-    color: black;
+	color: black;
 }
 .light_theme a {
-    color: black;
+	color: black;
 }
 .light_theme pre {
-    color: black;
+	color: black;
 }
 .light_theme .TrackCard p {
-    font-family: roboto;
-    color: black;
+	font-family: roboto;
+	color: black;
 }
 .light_theme .TrackCard:hover {
-    background: var(--accentColor) !important;
+	background: var(--accentColor) !important;
 }
 .light_theme .playingTrack {
-    background: var(--accentColor);
+	background: var(--accentColor);
 }
 .light_theme .playingTrack .trackTitle {
-    transform: translateX(0px);
+	transform: translateX(0px);
 }
 .light_theme ::placeholder {
-    color: black;
+	color: black;
 }
 .light_theme button img {
-    filter: invert(1);
+	filter: invert(1);
 }
 .light_theme .icon {
-    filter: invert(1);
+	filter: invert(1);
 }
 .light_theme .bg1 {
-    background: rgb(255, 255, 255);
+	background: rgb(255, 255, 255);
 }
 .light_theme .bg2 {
-    background: rgb(255, 255, 255);
+	background: rgb(255, 255, 255);
 }
 .light_theme .blurred_bg {
-    background: rgb(248, 248, 248);
+	background: rgb(248, 248, 248);
 }
 .light_theme .PlaylistCard {
 }
 .light_theme .sliverBar #blurred {
-    display: none !important;
+	display: none !important;
 }
 .light_theme .sliverBarFooter {
-    background: transparent;
+	background: transparent;
 }

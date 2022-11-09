@@ -1,7 +1,7 @@
-import type {AxiosResponse, AxiosError} from 'axios'
-import axios from 'axios';
+import type { AxiosResponse, AxiosError } from 'axios'
+import axios from 'axios'
 
-const baseURL = "http://localhost:3002/";
+const baseURL = 'http://localhost:3002/'
 
 /**
  * 创建axios实例
@@ -9,24 +9,29 @@ const baseURL = "http://localhost:3002/";
  * @type {AxiosInstance}
  */
 const instance = axios.create({
-    baseURL,
-    method : 'POST',
-    timeout : 120000,
-    withCredentials: false,
-});
-
-instance.interceptors.request.use(config => {
-    // 开始
-    return config
-}, err => {
-    return Promise.reject(err)
+	baseURL,
+	method: 'POST',
+	timeout: 120000,
+	withCredentials: false,
 })
 
-// 响应时
-instance.interceptors.response.use(response => {
-    return response;
-}, err => Promise.resolve(err.response))
+instance.interceptors.request.use(
+	(config) => {
+		// 开始
+		return config
+	},
+	(err) => {
+		return Promise.reject(err)
+	},
+)
 
+// 响应时
+instance.interceptors.response.use(
+	(response) => {
+		return response
+	},
+	(err) => Promise.resolve(err.response),
+)
 
 /**
  * merge 默认配置；调用实例，返回promise;
@@ -35,21 +40,24 @@ instance.interceptors.response.use(response => {
  * @returns {AxiosPromise}
  */
 const myAxios = (options = {}) => {
-    options = Object.assign({},{
-        responseType: 'json',
-        responseEncoding: 'utf8'
-    },options);
+	options = Object.assign(
+		{},
+		{
+			responseType: 'json',
+			responseEncoding: 'utf8',
+		},
+		options,
+	)
 
-    return new Promise((resolve, reject) => {
-        instance(options).then((res:AxiosResponse) => {
-            resolve(res)
-        }).catch((err:AxiosError) => {
-            reject(err)
-        })
-    })
-};
+	return new Promise((resolve, reject) => {
+		instance(options)
+			.then((res: AxiosResponse) => {
+				resolve(res)
+			})
+			.catch((err: AxiosError) => {
+				reject(err)
+			})
+	})
+}
 
-
-export default myAxios;
-
-
+export default myAxios

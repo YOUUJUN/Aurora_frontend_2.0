@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 
-export function setupIpcMainListener(win:any) {
+export function setupIpcMainListener(win: any) {
 	//ipcMain listener
 
 	ipcMain.on('minimize', () => {
