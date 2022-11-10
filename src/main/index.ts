@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow } from 'electron'
 import * as path from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
-import { setupIpcMainListener } from './lib/ipcListener'
+import { setupIpcMainListener, setupBuffCrawlerIpcMainListener } from './lib/ipcListener'
 
 function createWindow(): void {
 	// Create the browser window.
@@ -50,6 +50,7 @@ function createWindow(): void {
 
 	//设置windows原生窗体操作监听
 	setupIpcMainListener(mainWindow)
+	setupBuffCrawlerIpcMainListener(mainWindow)
 }
 
 // This method will be called when Electron has finished

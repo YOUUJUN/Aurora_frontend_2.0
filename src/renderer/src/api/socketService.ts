@@ -5,7 +5,7 @@ export interface TsocketInstance {
 	send: (alia: any) => void
 }
 
-const wsURL = `ws://localhost:8888/`
+const wsURL = `ws://localhost:8888/ws`
 
 export default class SocketService {
 	//socket 单例

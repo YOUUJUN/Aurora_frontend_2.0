@@ -76,7 +76,7 @@ button {
 	height: 45px;
 	width: 100%;
 	background-color: #f0f0f0;
-	z-index: 9999;
+	z-index: 3;
 }
 
 .main-wrap {
