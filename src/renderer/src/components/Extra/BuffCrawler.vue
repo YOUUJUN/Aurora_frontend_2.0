@@ -10,7 +10,8 @@ import { errorCaptured } from '@renderer/utils/help'
 import { ref, reactive, createVNode } from 'vue'
 
 import { postActionLocal } from '@renderer/api/manage'
-import SocketService from '@renderer/api/socketService'
+// import SocketService from '@renderer/api/socketService'
+import { useSocketIO } from '@renderer/hooks/useSocketIO'
 
 const { ipcRenderer } = window.electron
 
@@ -188,7 +189,7 @@ const startBuffCrawler = (info) => {
 			})
 		},
 
-		onCancel() {},
+		onCancel() { },
 	})
 }
 
@@ -210,7 +211,7 @@ const stopBuffCrawler = () => {
 			})
 		},
 
-		onCancel() {},
+		onCancel() { },
 	})
 }
 
@@ -235,19 +236,28 @@ const reStartBuffCrawler = () => {
 			})
 		},
 
-		onCancel() {},
+		onCancel() { },
 	})
 }
 
 const connectSocket = () => {
-	SocketService.Instance.connect()
-	const socket = SocketService.Instance
-	socket.registerCallBack('endLoop', (payload) => {
-		if (payload === 'endLoop') {
-			sendMessageToNode('notifyLoopEnd')
-		}
+	// SocketService.Instance.connect()
+	// const socket = SocketService.Instance
+	// socket.registerCallBack('endLoop', (payload) => {
+	// 	if (payload === 'endLoop') {
+	// 		sendMessageToNode('notifyLoopEnd')
+	// 	}
+	// })
+	// return SocketService.Instance
+	const wsUrl = `ws://localhost:8888/`
+	useSocketIO(wsUrl).socket.once('endLoop', (payload) => {
+		// console.log('payload', payload);
+		// new Notification(`通知！！！`, { 
+		//     body: `本次循环任务已经完成！` 
+		// });   
+		sendMessageToNode("notifyLoopEnd");
 	})
-	return SocketService.Instance
+
 }
 
 const getBuffCrawlerLog = () => {
@@ -289,12 +299,8 @@ defineExpose({
 					<a-descriptions-item label="Start time">{{ serverStartTime }}</a-descriptions-item>
 					<a-descriptions-item label="End Time">{{ serverEndTime }}</a-descriptions-item>
 					<a-descriptions-item label="Latest Token" :span="3">
-						<a-input-search
-							v-model:value="tokenInfo"
-							placeholder="input latest token"
-							size="large"
-							@search="upDateLogInfo"
-						>
+						<a-input-search v-model:value="tokenInfo" placeholder="input latest token" size="large"
+							@search="upDateLogInfo">
 							<template #enterButton>
 								<a-button>更新</a-button>
 							</template>
@@ -337,56 +343,39 @@ defineExpose({
 			</section>
 
 			<section class="data-panel bg2">
-				<a-transfer
-					v-model:target-keys="targetKeys"
-					:data-source="buffData"
-					:disabled="disabled"
-					:show-search="showSearch"
-					:show-select-all="true"
-					:filter-option="doSearch"
-					:list-style="resetTransferStyle"
-					@change="onChange"
-				>
-					<template
-						#children="{
-							direction,
-							filteredItems,
-							selectedKeys,
-							disabled: listDisabled,
-							onItemSelectAll,
-							onItemSelect,
-						}"
-					>
-						<a-table
-							:row-selection="
-								getRowSelection({
-									disabled: listDisabled,
-									selectedKeys,
-									onItemSelectAll,
-									onItemSelect,
-								})
-							"
-							:columns="direction === 'left' ? leftColumns : rightColumns"
-							:class="{ rightTable: direction === 'right' }"
-							:data-source="filteredItems"
-							size="default"
-							:custom-row="
+				<a-transfer v-model:target-keys="targetKeys" :data-source="buffData" :disabled="disabled"
+					:show-search="showSearch" :show-select-all="true" :filter-option="doSearch"
+					:list-style="resetTransferStyle" @change="onChange">
+					<template #children="{
+						direction,
+						filteredItems,
+						selectedKeys,
+						disabled: listDisabled,
+						onItemSelectAll,
+						onItemSelect,
+					}">
+						<a-table :row-selection="
+							getRowSelection({
+								disabled: listDisabled,
+								selectedKeys,
+								onItemSelectAll,
+								onItemSelect,
+							})
+						" :columns="direction === 'left' ? leftColumns : rightColumns" :class="{ rightTable: direction === 'right' }"
+							:data-source="filteredItems" size="default" :custom-row="
 								({ key, disabled: itemDisabled }) => ({
 									onClick: () => {
 										if (itemDisabled || listDisabled) return
 										onItemSelect(key, !selectedKeys.includes(key))
 									},
 								})
-							"
-						>
+							">
 							<template #bodyCell="{ column, text, record }">
 								<template v-if="['cost', 'selfBuyNum', 'steamPrice'].includes(column.dataIndex)">
 									<div>
-										<a-input
-											v-if="editableData[record.key]"
+										<a-input v-if="editableData[record.key]"
 											v-model:value="editableData[record.key][column.dataIndex]"
-											style="margin: -5px 0"
-										/>
+											style="margin: -5px 0" />
 										<template v-else>
 											{{ text }}
 										</template>
@@ -473,7 +462,7 @@ export default {
 					})
 				},
 
-				onCancel() {},
+				onCancel() { },
 			})
 		},
 
