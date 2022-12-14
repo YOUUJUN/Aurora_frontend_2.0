@@ -2,44 +2,41 @@ import type { App } from 'vue'
 
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Home from '@renderer/views/Home.vue'
-import UserCenter from '@renderer/components/Root/Player/UserCenter.vue'
-import CrawlerList from '@renderer/components/Root/Player/CrawlerList.vue'
-import Crawler from '@renderer/views/Crawler.vue'
-import BuffCrawler from '@renderer/components/Extra/BuffCrawler.vue'
-import PurchaseAnalyser from '@renderer/components/Extra/PurchaseAnalyser.vue'
-
 const routes = [
 	{
 		path: '/',
 		name: 'Home',
-		component: Home,
+		component: () => import('@renderer/views/Home.vue'),
 		children: [
 			{
 				path: '/',
-				component: UserCenter,
+				component: () => import('@renderer/components/Root/Player/UserCenter.vue'),
 			},
 		],
 	},
 	{
 		path: '/Crawler',
 		name: 'Crawler',
-		component: Crawler,
+		component: () => import('@renderer/views/Crawler.vue'),
 		children: [
 			{
 				path: '',
-				component: CrawlerList,
+				component: () => import('@renderer/components/Root/Player/CrawlerList.vue'),
 			},
 			{
 				path: 'BuffCrawler',
-				component: BuffCrawler,
+				component: () => import('@renderer/components/Crawler/BuffCrawler.vue'),
 				meta: { keepAlive: true },
 			},
 			{
 				path: 'PurchaseAnalyser',
-				component: PurchaseAnalyser,
+				component: () => import('@renderer/components/Crawler/PurchaseAnalyser.vue'),
 				meta: { keepAlive: true },
 			},
+			{
+				path : 'DataAnalyser',
+				component : () => import('@/renderer/components/Crawler/DataAnalyser.vue')
+			}
 		],
 	},
 ]
