@@ -6,8 +6,8 @@ import Home from '@renderer/views/Home.vue'
 import UserCenter from '@renderer/components/Root/Player/UserCenter.vue'
 import CrawlerList from '@renderer/components/Root/Player/CrawlerList.vue'
 import Crawler from '@renderer/views/Crawler.vue'
-import BuffCrawler from '@renderer/components/Extra/BuffCrawler.vue'
-import PurchaseAnalyser from '@renderer/components/Extra/PurchaseAnalyser.vue'
+import BuffCrawler from '@renderer/components/Crawler/BuffCrawler.vue'
+import PurchaseAnalyser from '@renderer/components/Crawler/PurchaseAnalyser.vue'
 
 const routes = [
 	{
