@@ -13,7 +13,8 @@ const accentColor = computed(() => settingStore.accentColor)
 </script>
 
 <template>
-	<article id="wrap" class="container light_theme">
+	<a-config-provider :locale="locale">
+		<article id="wrap" class="container light_theme">
 		<header class="header-wrap">
 			<CustomTitleBar />
 		</header>
@@ -32,12 +33,18 @@ const accentColor = computed(() => settingStore.accentColor)
 
 		<Bg></Bg>
 	</article>
+	</a-config-provider>
+	
 </template>
 
 <script lang="ts">
+import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
+
 export default {
 	data() {
-		return {}
+		return {
+			locale : zhCN
+		}
 	},
 }
 </script>
