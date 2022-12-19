@@ -1,5 +1,5 @@
 import request from '@renderer/utils/localhttp'
-export function postActionLocal(url: string, parameter) {
+export function postActionLocal(url: string, parameter?:any) {
 	return request({
 		url,
 		method: 'post',

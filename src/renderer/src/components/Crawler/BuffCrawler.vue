@@ -4,14 +4,25 @@ import type { Ref } from 'vue'
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { message, Modal } from 'ant-design-vue'
 
-import { sendMessageToNode } from '@renderer/utils'
+import { sendMessageToNode } from '@renderer/utils/ipc'
 import { errorCaptured } from '@renderer/utils/help'
 
 import { ref, reactive, createVNode } from 'vue'
 
-import { postActionLocal } from '@renderer/api/manage'
 // import SocketService from '@renderer/api/socketService'
 import { useSocketIO } from '@renderer/hooks/useSocketIO'
+import {
+	startBuffCrawlerService,
+	stopBuffCrawlerService,
+	clearBuffCacheData,
+	fetchBuffCacheData,
+	startBuffCrawlerService_history,
+	stopBuffCrawlerService_history,
+    fetchBuffCacheData_history,
+	saveSteamPurchase,
+	saveBufffPurchase,
+	updateBuffCrawlerPass,
+} from '@renderer/api/buff'
 
 const { ipcRenderer } = window.electron
 
@@ -189,7 +200,7 @@ const startBuffCrawler = (info) => {
 			})
 		},
 
-		onCancel() { },
+		onCancel() {},
 	})
 }
 
@@ -211,7 +222,7 @@ const stopBuffCrawler = () => {
 			})
 		},
 
-		onCancel() { },
+		onCancel() {},
 	})
 }
 
@@ -236,7 +247,7 @@ const reStartBuffCrawler = () => {
 			})
 		},
 
-		onCancel() { },
+		onCancel() {},
 	})
 }
 
@@ -252,12 +263,11 @@ const connectSocket = () => {
 	const wsUrl = `ws://localhost:8888/`
 	useSocketIO(wsUrl).socket.once('endLoop', (payload) => {
 		// console.log('payload', payload);
-		// new Notification(`通知！！！`, { 
-		//     body: `本次循环任务已经完成！` 
-		// });   
-		sendMessageToNode("notifyLoopEnd");
+		// new Notification(`通知！！！`, {
+		//     body: `本次循环任务已经完成！`
+		// });
+		sendMessageToNode('notifyLoopEnd')
 	})
-
 }
 
 const getBuffCrawlerLog = () => {
@@ -299,8 +309,12 @@ defineExpose({
 					<a-descriptions-item label="Start time">{{ serverStartTime }}</a-descriptions-item>
 					<a-descriptions-item label="End Time">{{ serverEndTime }}</a-descriptions-item>
 					<a-descriptions-item label="Latest Token" :span="3">
-						<a-input-search v-model:value="tokenInfo" placeholder="input latest token" size="large"
-							@search="upDateLogInfo">
+						<a-input-search
+							v-model:value="tokenInfo"
+							placeholder="input latest token"
+							size="large"
+							@search="upDateLogInfo"
+						>
 							<template #enterButton>
 								<a-button>更新</a-button>
 							</template>
@@ -340,44 +354,60 @@ defineExpose({
 					<a-button @click="confirmAction(clearBuff)">清除BUFF数据！！</a-button>
 					<a-button @click="analysePurchase()">分析订单</a-button>
 					<a-button @click="analyseData()">分析数据</a-button>
-					
 				</a-space>
 			</section>
 
 			<section class="data-panel bg2">
-				<a-transfer v-model:target-keys="targetKeys" :data-source="buffData" :disabled="disabled"
-					:show-search="showSearch" :show-select-all="true" :filter-option="doSearch"
-					:list-style="resetTransferStyle" @change="onChange">
-					<template #children="{
-						direction,
-						filteredItems,
-						selectedKeys,
-						disabled: listDisabled,
-						onItemSelectAll,
-						onItemSelect,
-					}">
-						<a-table :row-selection="
-							getRowSelection({
-								disabled: listDisabled,
-								selectedKeys,
-								onItemSelectAll,
-								onItemSelect,
-							})
-						" :columns="direction === 'left' ? leftColumns : rightColumns" :class="{ rightTable: direction === 'right' }"
-							:data-source="filteredItems" size="default" :custom-row="
+				<a-transfer
+					v-model:target-keys="targetKeys"
+					:data-source="buffData"
+					:disabled="disabled"
+					:show-search="showSearch"
+					:show-select-all="true"
+					:filter-option="doSearch"
+					:list-style="resetTransferStyle"
+					@change="onChange"
+				>
+					<template
+						#children="{
+							direction,
+							filteredItems,
+							selectedKeys,
+							disabled: listDisabled,
+							onItemSelectAll,
+							onItemSelect,
+						}"
+					>
+						<a-table
+							:row-selection="
+								getRowSelection({
+									disabled: listDisabled,
+									selectedKeys,
+									onItemSelectAll,
+									onItemSelect,
+								})
+							"
+							:columns="direction === 'left' ? leftColumns : rightColumns"
+							:class="{ rightTable: direction === 'right' }"
+							:data-source="filteredItems"
+							size="default"
+							:custom-row="
 								({ key, disabled: itemDisabled }) => ({
 									onClick: () => {
 										if (itemDisabled || listDisabled) return
 										onItemSelect(key, !selectedKeys.includes(key))
 									},
 								})
-							">
+							"
+						>
 							<template #bodyCell="{ column, text, record }">
 								<template v-if="['cost', 'selfBuyNum', 'steamPrice'].includes(column.dataIndex)">
 									<div>
-										<a-input v-if="editableData[record.key]"
+										<a-input
+											v-if="editableData[record.key]"
 											v-model:value="editableData[record.key][column.dataIndex]"
-											style="margin: -5px 0" />
+											style="margin: -5px 0"
+										/>
 										<template v-else>
 											{{ text }}
 										</template>
@@ -464,20 +494,20 @@ export default {
 					})
 				},
 
-				onCancel() { },
+				onCancel() {},
 			})
 		},
 
 		/*---buff service qpi---*/
 		async actBuff() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/actBuff')
+			const [err, msg] = await errorCaptured(startBuffCrawlerService)
 			if (msg) {
 				message.success(msg.data.message)
 			}
 		},
 
 		async actPageBuff() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/actBuff', {
+			const [err, msg] = await errorCaptured(startBuffCrawlerService, {
 				startPage: this.actPage,
 				endPage: this.endPage,
 			})
@@ -488,7 +518,7 @@ export default {
 		},
 
 		async stopBuff() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/stopBuff')
+			const [err, msg] = await errorCaptured(stopBuffCrawlerService)
 
 			if (msg) {
 				message.success(msg.data.message)
@@ -496,7 +526,7 @@ export default {
 		},
 
 		async clearBuff() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/clearBuff')
+			const [err, msg] = await errorCaptured(clearBuffCacheData)
 
 			if (msg) {
 				message.success(msg.data.message)
@@ -504,7 +534,7 @@ export default {
 		},
 
 		async gatherBuff() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/gatherBuff')
+			const [err, msg] = await errorCaptured(fetchBuffCacheData)
 
 			if (msg) {
 				this.processBuffData(msg.data.data)
@@ -520,7 +550,7 @@ export default {
 		},
 
 		async actBuffHistoryPrices() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/actBuffHistoryPrices')
+			const [err, msg] = await errorCaptured(startBuffCrawlerService_history)
 
 			if (msg) {
 				message.success(msg.data.message)
@@ -528,7 +558,7 @@ export default {
 		},
 
 		async stopBuffHistoryPrices() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/stopBuffHistoryPrices')
+			const [err, msg] = await errorCaptured(stopBuffCrawlerService_history)
 
 			if (msg) {
 				message.success(msg.data.message)
@@ -536,7 +566,7 @@ export default {
 		},
 
 		async historyBuff() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/getBuffHistoryPrices')
+			const [err, msg] = await errorCaptured(fetchBuffCacheData_history)
 
 			if (msg) {
 				this.processBuffData(msg.data.data)
@@ -548,7 +578,7 @@ export default {
 			this.goTo('/Crawler/PurchaseAnalyser')
 		},
 
-		analyseData(){
+		analyseData() {
 			this.goTo('/Crawler/DataAnalyser')
 		},
 
@@ -605,7 +635,7 @@ export default {
 
 			console.log('rightData', rightData)
 
-			const [err, msg] = await errorCaptured(postActionLocal, '/saveSteamPurchase', {
+			const [err, msg] = await errorCaptured(saveSteamPurchase, {
 				goods: rightData,
 				buy_time: new Date().getTime(),
 			})
@@ -638,7 +668,7 @@ export default {
 
 			console.log('rightData', rightData)
 
-			const [err, msg] = await errorCaptured(postActionLocal, '/saveBufffPurchase', {
+			const [err, msg] = await errorCaptured(saveBufffPurchase, {
 				goods: rightData,
 				buy_time: new Date().getTime(),
 			})
@@ -660,7 +690,7 @@ export default {
 		async upDateLogInfo() {
 			const token = this.tokenInfo.trim()
 
-			const [err, msg] = await errorCaptured(postActionLocal, '/updateLogInfo', {
+			const [err, msg] = await errorCaptured(updateBuffCrawlerPass, {
 				token,
 			})
 
