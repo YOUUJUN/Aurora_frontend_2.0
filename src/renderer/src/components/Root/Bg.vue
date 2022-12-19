@@ -2,7 +2,7 @@
 
 <template>
 	<section class="bg">
-		<div id="bg_fancy"></div>
+		<div id="bg_cyber"></div>
 	</section>
 </template>
 
@@ -33,6 +33,19 @@ export default {
 .bg #bg_fancy {
 	background-color: #4158d0;
 	background-image: linear-gradient(43deg, #4158d0 0%, #c850c0 46%, #ffcc70 100%);
+	border-radius: 0%;
+	position: fixed;
+	top: 0%;
+	width: 100%;
+	height: 100%;
+	filter: blur(50px);
+	opacity: 0.3;
+}
+
+
+.bg #bg_cyber{
+	background-color: #d43f8d;
+	background-image: linear-gradient(to top, #0250c5 0%, #d43f8d 100%);
 	border-radius: 0%;
 	position: fixed;
 	top: 0%;
