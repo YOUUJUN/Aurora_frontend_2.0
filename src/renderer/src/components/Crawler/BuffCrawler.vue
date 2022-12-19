@@ -339,6 +339,8 @@ defineExpose({
 					<a-button @click="confirmAction(stopBuffHistoryPrices)">BUFF历史价格爬虫关闭！！</a-button>
 					<a-button @click="confirmAction(clearBuff)">清除BUFF数据！！</a-button>
 					<a-button @click="analysePurchase()">分析订单</a-button>
+					<a-button @click="analyseData()">分析数据</a-button>
+					
 				</a-space>
 			</section>
 
@@ -544,6 +546,10 @@ export default {
 
 		analysePurchase() {
 			this.goTo('/Crawler/PurchaseAnalyser')
+		},
+
+		analyseData(){
+			this.goTo('/Crawler/DataAnalyser')
 		},
 
 		/*------*/
