@@ -2,7 +2,6 @@ import type { App } from 'vue'
 
 import { createRouter, createWebHistory } from 'vue-router'
 
-
 import CrawlerVue from '@renderer/views/Crawler.vue'
 import UserCenterVue from '@renderer/components/Root/Player/UserCenter.vue'
 import CrawlerListVue from '@renderer/components/Root/Player/CrawlerList.vue'
@@ -18,33 +17,35 @@ const routes = [
 		children: [
 			{
 				path: '/',
-				component: () => UserCenterVue,
+				component: UserCenterVue,
 			},
 		],
 	},
 	{
 		path: '/Crawler',
 		name: 'Crawler',
-		component: () => CrawlerVue,
+		component: CrawlerVue,
 		children: [
 			{
 				path: '',
-				component: () => CrawlerListVue,
+				component: CrawlerListVue,
 			},
 			{
 				path: 'BuffCrawler',
-				component: () => BuffCrawlerVue,
+				component: BuffCrawlerVue,
 				meta: { keepAlive: true },
 			},
 			{
+				name: 'PurchaseAnalyser',
 				path: 'PurchaseAnalyser',
-				component: () => PurchaseAnalyserVue,
+				component: PurchaseAnalyserVue,
 				meta: { keepAlive: true },
 			},
 			{
-				path : 'DataAnalyser',
-				component : () => DataAnalyserVue
-			}
+				name: 'DataAnalyser',
+				path: 'DataAnalyser',
+				component: DataAnalyserVue,
+			},
 		],
 	},
 ]

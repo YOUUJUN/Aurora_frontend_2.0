@@ -8,6 +8,7 @@ import { sendMessageToNode } from '@renderer/utils/ipc'
 import { errorCaptured } from '@renderer/utils/help'
 
 import { ref, reactive, createVNode } from 'vue'
+import { useDataStore } from '@renderer/store/modules/data'
 
 // import SocketService from '@renderer/api/socketService'
 import { useSocketIO } from '@renderer/hooks/useSocketIO'
@@ -18,7 +19,7 @@ import {
 	fetchBuffCacheData,
 	startBuffCrawlerService_history,
 	stopBuffCrawlerService_history,
-    fetchBuffCacheData_history,
+	fetchBuffCacheData_history,
 	saveSteamPurchase,
 	saveBufffPurchase,
 	updateBuffCrawlerPass,
@@ -535,9 +536,11 @@ export default {
 
 		async gatherBuff() {
 			const [err, msg] = await errorCaptured(fetchBuffCacheData)
-
+			console.log('ok', err, 'msg', msg)
 			if (msg) {
+				console.log('in---')
 				this.processBuffData(msg.data.data)
+				useDataStore().setBuffData(this.buffData)
 				message.success(msg.data.message)
 			}
 		},
@@ -575,11 +578,15 @@ export default {
 		},
 
 		analysePurchase() {
-			this.goTo('/Crawler/PurchaseAnalyser')
+			this.$router.push({
+				name : 'PurchaseAnalyser',
+			})
 		},
 
 		analyseData() {
-			this.goTo('/Crawler/DataAnalyser')
+			this.$router.push({
+				name : 'DataAnalyser',
+			})
 		},
 
 		/*------*/
@@ -705,10 +712,6 @@ export default {
 			if (err) {
 				console.log('err', err)
 			}
-		},
-
-		goTo(target) {
-			this.$router.push(target)
 		},
 	},
 }
