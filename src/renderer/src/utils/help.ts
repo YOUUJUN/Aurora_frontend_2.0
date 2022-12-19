@@ -1,3 +1,5 @@
+import { isObject } from "./is"
+
 /**
  * better error handler for async func
  *
@@ -13,4 +15,15 @@ export async function errorCaptured(asyncFunc, ...params: any[]) {
 	} catch (e) {
 		return [e, null]
 	}
+}
+
+
+
+// 深度合并
+export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
+	let key: string
+	for (key in target) {
+		src[key] = isObject(src[key]) ? deepMerge(src[key], target[key]) : (src[key] = target[key])
+	}
+	return src
 }

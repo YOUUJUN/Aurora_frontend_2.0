@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { sendMessageToNode } from '@renderer/utils'
+import { sendMessageToNode } from '@renderer/utils/ipc'
 import { FullScreen, Close, Minus } from '@element-plus/icons-vue'
 </script>
 <template>
