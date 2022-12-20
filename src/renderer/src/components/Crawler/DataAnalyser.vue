@@ -41,6 +41,7 @@ const drawChartByChunk = (data: Array<any>, chunkCount: number) => {
 		let i = 1
 
 		while (i < chunkCount) {
+			let cacheData = splitData[i - 1]
 			const xData = splitData[i - 1].map((item) => item.name)
 			const yBuffData = splitData[i - 1].map((item) => item.cost)
 			const ySteamData = splitData[i - 1].map((item) => item.steamPrice)
@@ -66,6 +67,18 @@ const drawChartByChunk = (data: Array<any>, chunkCount: number) => {
 						label: {
 							show: true,
 						},
+					},
+					formatter: (params) => {
+						console.log('params', params)
+
+						let tips = `${params[0].name}<br>`
+
+						params.forEach(item => {
+							tips += `<div>${item.marker} ${item.seriesName}<span style="float:right">${item.data}</span></div>`
+						})
+						tips += `<div>BUFF_SALE<span style="float:right">${cacheData[params[0].dataIndex].buyNum}</span></div>`
+
+						return tips
 					},
 				},
 				toolbox: {
@@ -167,6 +180,8 @@ export default {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+	border-radius: 20px;
+	overflow: hidden;
 }
 
 .title {
