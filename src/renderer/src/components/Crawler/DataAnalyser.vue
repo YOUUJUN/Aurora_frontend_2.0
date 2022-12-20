@@ -8,6 +8,8 @@ import { ref, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDataStore } from '@renderer/store/modules/data'
 
+const { openExternal } = <any>window.api
+
 type EChartsOption = echarts.EChartsOption
 
 let renderCount: Ref<number> = ref(12)
@@ -69,14 +71,14 @@ const drawChartByChunk = (data: Array<any>, chunkCount: number) => {
 						},
 					},
 					formatter: (params) => {
-						console.log('params', params)
-
 						let tips = `${params[0].name}<br>`
 
-						params.forEach(item => {
+						params.forEach((item) => {
 							tips += `<div>${item.marker} ${item.seriesName}<span style="float:right">${item.data}</span></div>`
 						})
-						tips += `<div>BUFF_SALE<span style="float:right">${cacheData[params[0].dataIndex].buyNum}</span></div>`
+						tips += `<div>BUFF_SALE<span style="float:right">${
+							cacheData[params[0].dataIndex].buyNum
+						}</span></div>`
 
 						return tips
 					},
@@ -123,6 +125,21 @@ const drawChartByChunk = (data: Array<any>, chunkCount: number) => {
 			}
 
 			myChart.setOption(option)
+			myChart.on('click', function (params) {
+				const { seriesName, seriesIndex } = params
+				console.log('seriesName', seriesName, cacheData[<number>seriesIndex].refererUrl)
+				let jumpLink = ''
+				switch (seriesName) {
+					case 'Buff':
+						jumpLink = cacheData[<number>seriesIndex].refererUrl
+						break
+
+					case 'Steam':
+						jumpLink = cacheData[<number>seriesIndex].steamUrl
+						break
+				}
+				openExternal(jumpLink)
+			})
 
 			i += 1
 		}
@@ -146,6 +163,14 @@ onMounted(() => {
 
 	drawChartByChunk(<any[]>LowCostData, 100)
 })
+
+function sayHi() {
+	console.log('hi')
+}
+
+defineExpose({
+	openExternal,
+})
 </script>
 
 <template>
@@ -153,7 +178,7 @@ onMounted(() => {
 		<el-scrollbar>
 			<header>
 				<section class="title bg2">
-					<h2>数据分析</h2>
+					<h2 @click="openExternal('https://vue3js.cn/')">数据分析</h2>
 				</section>
 			</header>
 

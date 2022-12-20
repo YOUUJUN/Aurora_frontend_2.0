@@ -603,6 +603,8 @@ export default {
 					difference: new Number(data.difference).toFixed(2),
 					buyNum: data.buyNum,
 					buffProfits: new Number(data.buffProfits).toFixed(2),
+					steamUrl : data.steamUrl,
+					refererUrl : data.refererUrl,
 				})
 			}
 		},
