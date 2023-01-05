@@ -213,7 +213,7 @@ const stopBuffCrawler = () => {
 		content: '该操作会关闭后台 pm2 buffCrawler 服务',
 		onOk() {
 			return new Promise<void>((resolve, reject) => {
-				sendMessageToNode('stopBuffCrawler')
+				sendMessageToNode('stopBuffCrawler', servePath.value)
 				ipcRenderer.once('stopBuffCrawlerFailed', (e, payload) => {
 					message.error('服务启动失败!')
 					reject()
@@ -235,7 +235,7 @@ const reStartBuffCrawler = () => {
 		content: '该操作会重启后台 pm2 buffCrawler 服务',
 		onOk() {
 			return new Promise<void>((resolve, reject) => {
-				sendMessageToNode('reStartBuffCrawler')
+				sendMessageToNode('reStartBuffCrawler', servePath.value)
 				ipcRenderer.once('startBuffCrawlerFailed', (e, payload) => {
 					message.error('服务启动失败!')
 					reject()
