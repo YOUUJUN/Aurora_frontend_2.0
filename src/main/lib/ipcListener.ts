@@ -34,9 +34,8 @@ export function setupIpcMainListener(win: BrowserWindow): void {
 export function setupBuffCrawlerIpcMainListener(win: BrowserWindow): void {
 	// buff crawler ipc listener
 
-	ipcMain.on('startDevBuffCrawler', () => {
-		console.log('let us start buff crawler dev')
-		startDevBuffCrawler()
+	ipcMain.on('startDevBuffCrawler', (event, params) => {
+		startDevBuffCrawler(params)
 			.then((res) => {
 				win.webContents.send('buffCrawlerRunning', res)
 			})
@@ -48,9 +47,9 @@ export function setupBuffCrawlerIpcMainListener(win: BrowserWindow): void {
 			})
 	})
 
-	ipcMain.on('startPrdBuffCrawler', () => {
+	ipcMain.on('startPrdBuffCrawler', (event, params) => {
 		console.log('let us start buff crawler prd')
-		startPrdBuffCrawler()
+		startPrdBuffCrawler(params)
 			.then((res) => {
 				win.webContents.send('buffCrawlerRunning', res)
 			})
@@ -62,9 +61,9 @@ export function setupBuffCrawlerIpcMainListener(win: BrowserWindow): void {
 			})
 	})
 
-	ipcMain.on('stopBuffCrawler', () => {
+	ipcMain.on('stopBuffCrawler', (event, params) => {
 		console.log('let us stop buff crawler')
-		stopBuffCrawler()
+		stopBuffCrawler(params)
 			.then((res) => {
 				win.webContents.send('buffCrawlerClosing', res)
 			})
@@ -76,9 +75,9 @@ export function setupBuffCrawlerIpcMainListener(win: BrowserWindow): void {
 			})
 	})
 
-	ipcMain.on('reStartBuffCrawler', () => {
+	ipcMain.on('reStartBuffCrawler', (event, params) => {
 		console.log('let us restart buff crawler')
-		restartBuffCrawler()
+		restartBuffCrawler(params)
 			.then((res) => {
 				win.webContents.send('buffCrawlerRunning', res)
 			})
@@ -90,9 +89,9 @@ export function setupBuffCrawlerIpcMainListener(win: BrowserWindow): void {
 			})
 	})
 
-	ipcMain.on('getBuffCrawlerLog', () => {
+	ipcMain.on('getBuffCrawlerLog', (event, params) => {
 		console.log('let us get buff logs    ')
-		getBuffCrawlerLog()
+		getBuffCrawlerLog(params)
 	})
 
 	ipcMain.on('notifyLoopEnd', () => {

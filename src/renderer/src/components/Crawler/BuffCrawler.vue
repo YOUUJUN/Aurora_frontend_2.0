@@ -102,6 +102,7 @@ const rightTableColumns = [
 const actPage = ref(1)
 const endPage = ref(2)
 const tokenInfo = ref('')
+const servePath = ref('')
 
 /*--data transfer--*/
 const targetKeys: Ref<any[]> = ref(originTargetKeys)
@@ -186,7 +187,7 @@ const startBuffCrawler = (info) => {
 		onOk() {
 			return new Promise<void>((resolve, reject) => {
 				console.log('-------------------lalalalalla')
-				sendMessageToNode(command)
+				sendMessageToNode(command, servePath.value)
 
 				ipcRenderer.once('startBuffCrawlerFailed', (e, payload) => {
 					message.error('服务启动失败!')
@@ -294,6 +295,9 @@ defineExpose({
 
 			<section class="status-panel bg2">
 				<a-descriptions title="Server Info" bordered>
+					<a-descriptions-item label="Serve Path" :span="3">
+						<a-input v-model:value="servePath" placeholder="input absolute serve path"/>
+					</a-descriptions-item>
 					<a-descriptions-item label="Product">Buff Crawler</a-descriptions-item>
 					<a-descriptions-item label="Control Panel" :span="2">
 						<a-space>

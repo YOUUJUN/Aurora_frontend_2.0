@@ -5,7 +5,8 @@ import { Notification } from 'electron'
 
 const buffCrawlerPath = Path.resolve('../backend')
 
-export async function startDevBuffCrawler() {
+export async function startDevBuffCrawler(execPath = buffCrawlerPath) {
+	console.log('buffCrawlerPath', execPath)
 	try {
 		// await execFile('pm2 start ecosystem.config.js', ['--env development'], {
 		//     windowsHide : false,
@@ -14,7 +15,7 @@ export async function startDevBuffCrawler() {
 
 		let result = await execFile('npm run dev', {
 			windowsHide: false,
-			cwd: buffCrawlerPath,
+			cwd: execPath,
 			shell: true,
 		})
 
@@ -26,7 +27,7 @@ export async function startDevBuffCrawler() {
 	}
 }
 
-export async function startPrdBuffCrawler() {
+export async function startPrdBuffCrawler(execPath = buffCrawlerPath) {
 	try {
 		// await execFile('pm2 start ecosystem.config.js', ['--env development'], {
 		//     windowsHide : false,
@@ -35,7 +36,7 @@ export async function startPrdBuffCrawler() {
 
 		let result = await execFile('npm run prd', {
 			windowsHide: false,
-			cwd: buffCrawlerPath,
+			cwd: execPath,
 			shell: true,
 		})
 
@@ -47,11 +48,11 @@ export async function startPrdBuffCrawler() {
 	}
 }
 
-export async function stopBuffCrawler() {
+export async function stopBuffCrawler(execPath = buffCrawlerPath) {
 	try {
 		let result = await execFile('pm2 stop aurora', {
 			windowsHide: false,
-			cwd: buffCrawlerPath,
+			cwd: execPath,
 			shell: true,
 		})
 
@@ -63,11 +64,11 @@ export async function stopBuffCrawler() {
 	}
 }
 
-export async function restartBuffCrawler() {
+export async function restartBuffCrawler(execPath = buffCrawlerPath) {
 	try {
 		let result = await execFile('pm2 restart aurora', {
 			windowsHide: false,
-			cwd: buffCrawlerPath,
+			cwd: execPath,
 			shell: true,
 		})
 
@@ -79,11 +80,11 @@ export async function restartBuffCrawler() {
 	}
 }
 
-export async function getBuffCrawlerLog() {
+export async function getBuffCrawlerLog(execPath = buffCrawlerPath) {
 	try {
 		let logs = await execFile('start cmd.exe /K pm2 log aurora', {
 			windowsHide: false,
-			cwd: buffCrawlerPath,
+			cwd: execPath,
 			shell: true,
 		})
 
