@@ -273,7 +273,7 @@ const connectSocket = () => {
 }
 
 const getBuffCrawlerLog = () => {
-	sendMessageToNode('getBuffCrawlerLog')
+	sendMessageToNode('getBuffCrawlerLog', servePath.value)
 }
 
 defineExpose({
