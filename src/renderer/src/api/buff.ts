@@ -12,7 +12,10 @@ const fetchBuffCacheData_history = () => postActionLocal('/getBuffHistoryPrices'
 const saveSteamPurchase = (params?: Object) => postActionLocal('/saveSteamPurchase', params)
 const saveBufffPurchase = (params?: Object) => postActionLocal('/saveBufffPurchase', params)
 
+const saveGoodsData = (params?: Object) => postActionLocal('/saveGoods', params)
+
 const updateBuffCrawlerPass = (params?: Object) => postActionLocal('/updateLogInfo', params)
+
 
 export {
 	startBuffCrawlerService,
@@ -24,5 +27,6 @@ export {
 	fetchBuffCacheData_history,
     saveSteamPurchase,
     saveBufffPurchase,
+	saveGoodsData,
     updateBuffCrawlerPass,
 }

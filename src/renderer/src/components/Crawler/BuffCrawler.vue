@@ -12,18 +12,6 @@ import { useDataStore } from '@renderer/store/modules/data'
 
 // import SocketService from '@renderer/api/socketService'
 import { useSocketIO } from '@renderer/hooks/useSocketIO'
-import {
-	startBuffCrawlerService,
-	stopBuffCrawlerService,
-	clearBuffCacheData,
-	fetchBuffCacheData,
-	startBuffCrawlerService_history,
-	stopBuffCrawlerService_history,
-	fetchBuffCacheData_history,
-	saveSteamPurchase,
-	saveBufffPurchase,
-	updateBuffCrawlerPass,
-} from '@renderer/api/buff'
 
 const { ipcRenderer } = window.electron
 
@@ -296,7 +284,7 @@ defineExpose({
 			<section class="status-panel bg2">
 				<a-descriptions title="Server Info" bordered>
 					<a-descriptions-item label="Serve Path" :span="3">
-						<a-input v-model:value="servePath" placeholder="input absolute serve path"/>
+						<a-input v-model:value="servePath" placeholder="input absolute serve path" />
 					</a-descriptions-item>
 					<a-descriptions-item label="Product">Buff Crawler</a-descriptions-item>
 					<a-descriptions-item label="Control Panel" :span="2">
@@ -359,6 +347,7 @@ defineExpose({
 					<a-button @click="confirmAction(clearBuff)">清除BUFF数据！！</a-button>
 					<a-button @click="analysePurchase()">分析订单</a-button>
 					<a-button @click="analyseData()">分析数据</a-button>
+					<a-button @click="doTest()">测试</a-button>
 				</a-space>
 			</section>
 
@@ -452,6 +441,21 @@ defineExpose({
 </template>
 
 <script lang="ts">
+import {
+	startBuffCrawlerService,
+	stopBuffCrawlerService,
+	clearBuffCacheData,
+	fetchBuffCacheData,
+	startBuffCrawlerService_history,
+	stopBuffCrawlerService_history,
+	fetchBuffCacheData_history,
+	saveSteamPurchase,
+	saveBufffPurchase,
+	saveGoodsData,
+	updateBuffCrawlerPass,
+} from '@renderer/api/buff'
+
+
 export default {
 	data() {
 		return {}
@@ -583,13 +587,13 @@ export default {
 
 		analysePurchase() {
 			this.$router.push({
-				name : 'PurchaseAnalyser',
+				name: 'PurchaseAnalyser',
 			})
 		},
 
 		analyseData() {
 			this.$router.push({
-				name : 'DataAnalyser',
+				name: 'DataAnalyser',
 			})
 		},
 
@@ -607,8 +611,8 @@ export default {
 					difference: new Number(data.difference).toFixed(2),
 					buyNum: data.buyNum,
 					buffProfits: new Number(data.buffProfits).toFixed(2),
-					steamUrl : data.steamUrl,
-					refererUrl : data.refererUrl,
+					steamUrl: data.steamUrl,
+					refererUrl: data.refererUrl,
 				})
 			}
 		},
@@ -697,6 +701,60 @@ export default {
 			if (err) {
 				console.log('err', err)
 			}
+		},
+
+		async doTest() {
+			const payload = [
+				{
+					name: '折叠刀（★ StatTrak™） | 森林 DDPAT (战痕累累)',
+					difference: 9655.682999999999,
+					cost: '580',
+					steamPrice: '12041.98',
+					costPerformance: 16.647729310344827,
+					buyNum: 0,
+					profits: 7403.832739999999,
+					buffProfits: 565.5,
+					rate: 0.9530392842373098,
+					steamUrl:
+						'https://steamcommunity.com/market/listings/730/%E2%98%85%20StatTrak%E2%84%A2%20Flip%20Knife%20%7C%20Forest%20DDPAT%20%28Battle-Scarred%29',
+					historyUrl:
+						'https://buff.163.com/api/market/goods/price_history/buff?game=csgo&goods_id=43532&currency=CNY&days=30&_=1640246631792',
+					recordUrl:
+						'https://buff.163.com/api/market/goods/bill_order?game=csgo&goods_id=43532&_=1640246631792',
+					refererUrl: 'https://buff.163.com/market/goods?goods_id=43532&from=market',
+				},
+				{
+					name: '暗影双匕（★ StatTrak™） | 森林 DDPAT (战痕累累)',
+					difference: 5730.4095,
+					cost: '388.8',
+					steamPrice: '7199.07',
+					costPerformance: 14.738707561728394,
+					buyNum: 2,
+					profits: 4384.183410000001,
+					buffProfits: 379.08,
+					rate: 0.9473431984964724,
+					steamUrl:
+						'https://steamcommunity.com/market/listings/730/%E2%98%85%20StatTrak%E2%84%A2%20Shadow%20Daggers%20%7C%20Forest%20DDPAT%20%28Battle-Scarred%29',
+					historyUrl:
+						'https://buff.163.com/api/market/goods/price_history/buff?game=csgo&goods_id=43869&currency=CNY&days=30&_=1640245937843',
+					recordUrl:
+						'https://buff.163.com/api/market/goods/bill_order?game=csgo&goods_id=43869&_=1640245937843',
+					refererUrl: 'https://buff.163.com/market/goods?goods_id=43869&from=market',
+				},
+			]
+
+			const [err, msg] = await errorCaptured(saveGoodsData, {
+				goods : payload
+			})
+
+			if(msg){
+				console.log('msg', msg)
+			}
+
+			if(err){
+				console.error('err', err)
+			}
+
 		},
 
 		/*---updateToken---*/

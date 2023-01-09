@@ -11,6 +11,6 @@ export function getActionLocal(url: string, parameter) {
 	return request({
 		url,
 		method: 'get',
-		data: parameter,
+		params: parameter,
 	})
 }
