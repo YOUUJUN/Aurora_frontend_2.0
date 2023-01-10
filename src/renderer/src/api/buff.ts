@@ -13,6 +13,7 @@ const saveSteamPurchase = (params?: Object) => postActionLocal('/saveSteamPurcha
 const saveBufffPurchase = (params?: Object) => postActionLocal('/saveBufffPurchase', params)
 
 const saveGoodsData = (params?: Object) => postActionLocal('/saveGoods', params)
+const saveHistoryPriceData = (params?: Object) => postActionLocal('/saveGoodsHistoryPrice', params)
 
 const updateBuffCrawlerPass = (params?: Object) => postActionLocal('/updateLogInfo', params)
 
@@ -28,5 +29,6 @@ export {
     saveSteamPurchase,
     saveBufffPurchase,
 	saveGoodsData,
+	saveHistoryPriceData,
     updateBuffCrawlerPass,
 }

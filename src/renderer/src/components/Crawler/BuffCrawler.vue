@@ -347,7 +347,8 @@ defineExpose({
 					<a-button @click="confirmAction(clearBuff)">清除BUFF数据！！</a-button>
 					<a-button @click="analysePurchase()">分析订单</a-button>
 					<a-button @click="analyseData()">分析数据</a-button>
-					<a-button @click="doTest()">测试</a-button>
+					<a-button @click="saveServerCacheData()">保存缓存数据</a-button>
+					<a-button @click="saveServerCacheHistoryPrice()">保存缓存历史价格数据</a-button>
 				</a-space>
 			</section>
 
@@ -452,9 +453,9 @@ import {
 	saveSteamPurchase,
 	saveBufffPurchase,
 	saveGoodsData,
+	saveHistoryPriceData,
 	updateBuffCrawlerPass,
 } from '@renderer/api/buff'
-
 
 export default {
 	data() {
@@ -703,7 +704,7 @@ export default {
 			}
 		},
 
-		async doTest() {
+		async saveServerCacheData() {
 			const payload = [
 				{
 					name: '折叠刀（★ StatTrak™） | 森林 DDPAT (战痕累累)',
@@ -744,17 +745,28 @@ export default {
 			]
 
 			const [err, msg] = await errorCaptured(saveGoodsData, {
-				goods : payload
+				goods: payload,
 			})
 
-			if(msg){
+			if (msg) {
 				console.log('msg', msg)
 			}
 
-			if(err){
+			if (err) {
 				console.error('err', err)
 			}
+		},
 
+		async saveServerCacheHistoryPrice() {
+			const [err, msg] = await errorCaptured(saveHistoryPriceData)
+
+			if (msg) {
+				console.log('msg', msg)
+			}
+
+			if (err) {
+				console.error('err', err)
+			}
 		},
 
 		/*---updateToken---*/
