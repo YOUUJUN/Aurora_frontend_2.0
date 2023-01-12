@@ -126,16 +126,16 @@ const drawChartByChunk = (data: Array<any>, chunkCount: number) => {
 
 			myChart.setOption(option)
 			myChart.on('click', function (params) {
-				const { seriesName, seriesIndex } = params
-				console.log('seriesName', seriesName, cacheData[<number>seriesIndex].refererUrl)
+				const { seriesName, dataIndex } = params
+
 				let jumpLink = ''
 				switch (seriesName) {
 					case 'Buff':
-						jumpLink = cacheData[<number>seriesIndex].refererUrl
+						jumpLink = cacheData[<number>dataIndex].refererUrl
 						break
 
 					case 'Steam':
-						jumpLink = cacheData[<number>seriesIndex].steamUrl
+						jumpLink = cacheData[<number>dataIndex].steamUrl
 						break
 				}
 				openExternal(jumpLink)
