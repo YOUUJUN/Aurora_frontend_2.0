@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
+import type {Dayjs} from 'dayjs'
 
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { message, Modal } from 'ant-design-vue'
@@ -91,6 +92,8 @@ const actPage = ref(1)
 const endPage = ref(2)
 const tokenInfo = ref('')
 const servePath = ref('')
+//历史价格数据统计时间
+const statisticalTime = ref<Dayjs>()
 
 /*--data transfer--*/
 const targetKeys: Ref<any[]> = ref(originTargetKeys)
@@ -271,6 +274,7 @@ defineExpose({
 
 	actPage,
 	endPage,
+	statisticalTime,
 })
 </script>
 
@@ -348,6 +352,11 @@ defineExpose({
 					<a-button @click="analysePurchase()">分析订单</a-button>
 					<a-button @click="analyseData()">分析数据</a-button>
 					<a-button @click="saveServerCacheData()">保存缓存数据</a-button>
+					<a-date-picker
+						v-model:value="statisticalTime"
+						placeholder="请选择历史价格统计时间"
+						style="width: 200px"
+					/>
 					<a-button @click="saveServerCacheHistoryPrice()">保存缓存历史价格数据</a-button>
 				</a-space>
 			</section>
@@ -758,7 +767,17 @@ export default {
 		},
 
 		async saveServerCacheHistoryPrice() {
-			const [err, msg] = await errorCaptured(saveHistoryPriceData)
+			console.log('statisticalTime', this.statisticalTime)
+			if(!this.statisticalTime){
+				message.warning('请先选择历史数据统计时间!')
+				return
+			}
+
+			const payload = {
+				statisticalTime : this.statisticalTime?.format('YYYY-MM-DD')
+			}
+
+			const [err, msg] = await errorCaptured(saveHistoryPriceData, payload)
 
 			if (msg) {
 				console.log('msg', msg)

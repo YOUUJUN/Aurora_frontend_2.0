@@ -8,8 +8,8 @@ function createWindow(): void {
 	// Create the browser window.
 	const mainWindow = new BrowserWindow({
 		frame: true,
-		width: 900,
-		height: 670,
+		width: 1400,
+		height: 750,
 		show: false,
 		// titleBarStyle : 'hidden', //是否显示windows/mac标准标题栏
 		titleBarOverlay: {
