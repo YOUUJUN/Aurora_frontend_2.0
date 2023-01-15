@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type {Dayjs} from 'dayjs'
+import type { Dayjs } from 'dayjs'
 
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { message, Modal } from 'ant-design-vue'
@@ -361,6 +361,12 @@ defineExpose({
 				</a-space>
 			</section>
 
+			<section class="ctrlPanel bg2">
+				<a-space style="flex-wrap: wrap">
+					<a-button @click="doTest()">测试</a-button>
+				</a-space>
+			</section>
+
 			<section class="data-panel bg2">
 				<a-transfer
 					v-model:target-keys="targetKeys"
@@ -463,6 +469,7 @@ import {
 	saveBufffPurchase,
 	saveGoodsData,
 	saveHistoryPriceData,
+	startBuffRefererCrawler,
 	updateBuffCrawlerPass,
 } from '@renderer/api/buff'
 
@@ -768,16 +775,28 @@ export default {
 
 		async saveServerCacheHistoryPrice() {
 			console.log('statisticalTime', this.statisticalTime)
-			if(!this.statisticalTime){
+			if (!this.statisticalTime) {
 				message.warning('请先选择历史数据统计时间!')
 				return
 			}
 
 			const payload = {
-				statisticalTime : this.statisticalTime?.format('YYYY-MM-DD')
+				statisticalTime: this.statisticalTime?.format('YYYY-MM-DD'),
 			}
 
 			const [err, msg] = await errorCaptured(saveHistoryPriceData, payload)
+
+			if (msg) {
+				console.log('msg', msg)
+			}
+
+			if (err) {
+				console.error('err', err)
+			}
+		},
+
+		async doTest() {
+			const [err, msg] = await errorCaptured(startBuffRefererCrawler)
 
 			if (msg) {
 				console.log('msg', msg)
