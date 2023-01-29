@@ -15,7 +15,8 @@ const saveBufffPurchase = (params?: Object) => postActionLocal('/saveBufffPurcha
 const saveGoodsData = (params?: Object) => postActionLocal('/saveGoods', params)
 const saveHistoryPriceData = (params?: Object) => postActionLocal('/saveGoodsHistoryPrice', params)
 
-const startBuffRefererCrawler = (params?: Object) => postActionLocal('/launchRefererRequest', params)
+const startBuffRefererCrawlerLoop = (params?: Object) => postActionLocal('/launchRefererRequestLoop', params)
+const fetchRefererBuffData = (params?: Object) => postActionLocal('/gatherRefererBuff', params)
 
 const updateBuffCrawlerPass = (params?: Object) => postActionLocal('/updateLogInfo', params)
 
@@ -31,6 +32,7 @@ export {
 	saveBufffPurchase,
 	saveGoodsData,
 	saveHistoryPriceData,
-	startBuffRefererCrawler,
+	startBuffRefererCrawlerLoop,
+	fetchRefererBuffData,
 	updateBuffCrawlerPass,
 }

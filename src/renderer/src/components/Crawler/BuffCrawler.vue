@@ -56,9 +56,17 @@ const leftTableColumns = [
 		sorter: (a, b) => a.buyNum - b.buyNum,
 	},
 	{
-		dataIndex: 'buffProfits',
+		dataIndex: 'profits',
 		title: '预估利润',
-		sorter: (a, b) => a.buffProfits - b.buffProfits,
+		sorter: (a, b) => a.profits - b.profits,
+	},
+	{
+		dataIndex: 'priceList',
+		title: '在售价格',
+		customRender : (text, record) => {
+			console.log('text', text)
+			return text.value.join(' / ')
+		}
 	},
 ]
 
@@ -363,7 +371,10 @@ defineExpose({
 
 			<section class="ctrlPanel bg2">
 				<a-space style="flex-wrap: wrap">
-					<a-button @click="doTest()">测试</a-button>
+					<a-button @click="confirmAction(startRefererBuff)">启动REFERER BUFF爬虫</a-button>
+					<a-button @click="confirmAction(stopRefererBuff)">关闭REFERER BUFF爬虫</a-button>
+					<a-button @click="confirmAction(gatherRefererBuff)">启动REFERER BUFF数据汇总</a-button>
+					<a-button @click="confirmAction(clearRefererBuff)">清除REFERER BUFF数据</a-button>
 				</a-space>
 			</section>
 
@@ -469,7 +480,8 @@ import {
 	saveBufffPurchase,
 	saveGoodsData,
 	saveHistoryPriceData,
-	startBuffRefererCrawler,
+	startBuffRefererCrawlerLoop,
+	fetchRefererBuffData,
 	updateBuffCrawlerPass,
 } from '@renderer/api/buff'
 
@@ -506,6 +518,18 @@ export default {
 					break
 				case 'clearBuff':
 					title = '是否清除BUFF数据?'
+					break
+				case 'startRefererBuff':
+					title = '是否启动 REFERER BUFF爬虫?'
+					break
+				case 'stopRefererBuff':
+					title = '是否关闭 REFERER BUFF爬虫?'
+					break
+				case 'gatherRefererBuff':
+					title = '是否启动REFERER BUFF数据汇总?'
+					break
+				case 'clearRefererBuff':
+					title = '是否清除REFERER BUFF数据?'
 					break
 			}
 
@@ -627,9 +651,12 @@ export default {
 					steamPrice: new Number(data.steamPrice).toFixed(2),
 					difference: new Number(data.difference).toFixed(2),
 					buyNum: data.buyNum,
+					profits : new Number(data.profits).toFixed(2),
 					buffProfits: new Number(data.buffProfits).toFixed(2),
 					steamUrl: data.steamUrl,
 					refererUrl: data.refererUrl,
+					priceList : data?.priceList || [],
+					lowestBargainPriceList : data?.lowestBargainPriceList || []
 				})
 			}
 		},
@@ -795,8 +822,8 @@ export default {
 			}
 		},
 
-		async doTest() {
-			const [err, msg] = await errorCaptured(startBuffRefererCrawler)
+		async startRefererBuff() {
+			const [err, msg] = await errorCaptured(startBuffRefererCrawlerLoop)
 
 			if (msg) {
 				console.log('msg', msg)
@@ -806,6 +833,21 @@ export default {
 				console.error('err', err)
 			}
 		},
+
+		async stopRefererBuff() {},
+
+		async gatherRefererBuff() {
+			const [err, msg] = await errorCaptured(fetchRefererBuffData)
+			console.log('ok', err, 'msg', msg)
+			if (msg) {
+				console.log('in---')
+				this.processBuffData(msg.data.data)
+				useDataStore().setBuffData(this.buffData)
+				message.success(msg.data.message)
+			}
+		},
+
+		async clearRefererBuff() {},
 
 		/*---updateToken---*/
 		async upDateLogInfo() {
