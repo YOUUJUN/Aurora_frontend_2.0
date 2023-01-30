@@ -98,8 +98,10 @@ const rightTableColumns = [
 
 const actPage = ref(1)
 const endPage = ref(2)
+const offsetCount = ref(0)
+const limitCount = ref(1000)
 const tokenInfo = ref('')
-const servePath = ref('')
+const servePath = ref("D:\\web_project\\backend")
 //历史价格数据统计时间
 const statisticalTime = ref<Dayjs>()
 
@@ -282,6 +284,8 @@ defineExpose({
 
 	actPage,
 	endPage,
+	offsetCount,
+	limitCount,
 	statisticalTime,
 })
 </script>
@@ -371,10 +375,17 @@ defineExpose({
 
 			<section class="ctrlPanel bg2">
 				<a-space style="flex-wrap: wrap">
+					<a-input-number v-model:value="offsetCount" addon-before="offset" min="0" step="100" />
+					<a-input-number v-model:value="limitCount" addon-before="limit" min="1" step="150" />
+					<a-button @click="confirmAction(startRefererBuff, 'sticker')">启动REFERER BUFF爬虫_印花</a-button>
 					<a-button @click="confirmAction(startRefererBuff)">启动REFERER BUFF爬虫</a-button>
 					<a-button @click="confirmAction(stopRefererBuff)">关闭REFERER BUFF爬虫</a-button>
 					<a-button @click="confirmAction(gatherRefererBuff)">启动REFERER BUFF数据汇总</a-button>
 					<a-button @click="confirmAction(clearRefererBuff)">清除REFERER BUFF数据</a-button>
+				</a-space>
+
+				<a-space style="flex-wrap: wrap">
+					<a-button @click="confirmAction(stopRefererBuff)">关闭REFERER BUFF爬虫</a-button>
 				</a-space>
 			</section>
 
@@ -481,6 +492,7 @@ import {
 	saveGoodsData,
 	saveHistoryPriceData,
 	startBuffRefererCrawlerLoop,
+	stopBuffRefererCrawlerService,
 	fetchRefererBuffData,
 	updateBuffCrawlerPass,
 } from '@renderer/api/buff'
@@ -491,7 +503,7 @@ export default {
 	},
 
 	methods: {
-		confirmAction(action) {
+		confirmAction(action, ...params:any[]) {
 			let title = ''
 			const funcName = action.name.split(' ').pop()
 			switch (funcName) {
@@ -538,7 +550,7 @@ export default {
 				icon: createVNode(ExclamationCircleOutlined),
 				onOk() {
 					return new Promise<void>((resolve, reject) => {
-						action().then(() => {
+						action.apply(this, params).then(() => {
 							resolve()
 						})
 					})
@@ -822,11 +834,19 @@ export default {
 			}
 		},
 
-		async startRefererBuff() {
-			const [err, msg] = await errorCaptured(startBuffRefererCrawlerLoop)
+		async startRefererBuff(referer) {
+			console.log('referer', referer)
 
-			if (msg) {
-				console.log('msg', msg)
+			let params = {
+				offset : this.offsetCount,
+				limit : this.limitCount,
+				referer,
+			}
+
+			const [err, result] = await errorCaptured(startBuffRefererCrawlerLoop, params)
+			if (result) {
+				const {success, msg} = result.data;
+				message.warning(msg)
 			}
 
 			if (err) {
@@ -834,7 +854,13 @@ export default {
 			}
 		},
 
-		async stopRefererBuff() {},
+		async stopRefererBuff() {
+			const [err, msg] = await errorCaptured(stopBuffRefererCrawlerService)
+
+			if (msg) {
+				message.success(msg.data.message)
+			}
+		},
 
 		async gatherRefererBuff() {
 			const [err, msg] = await errorCaptured(fetchRefererBuffData)
@@ -899,10 +925,10 @@ export default {
 
 .ctrlPanel {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: space-around;
+	gap : 10px;
 	flex-wrap: wrap;
-	align-items: center;
 	padding: 15px 25px;
 	margin-bottom: 10px;
 	border-radius: 20px;
