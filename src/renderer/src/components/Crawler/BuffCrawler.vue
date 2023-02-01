@@ -69,10 +69,14 @@ const leftTableColumns = [
 		dataIndex: 'priceList',
 		title: '在售价格',
 		customRender : (text, record) => {
-			console.log('text', text)
 			return text.value.join(' / ')
 		}
 	},
+
+	{
+		dataIndex : 'leftOperation',
+		title: '跳转',
+	}
 ]
 
 const rightTableColumns = [
@@ -101,7 +105,8 @@ const rightTableColumns = [
 	},
 ]
 
-const transferTable = ref()
+const transferTable: Ref<any> = ref()
+const { openExternal } = <any>window.api
 
 const actPage = ref(1)
 const endPage = ref(2)
@@ -290,6 +295,7 @@ defineExpose({
 	targetKeys,
 
 	transferTable,
+	openExternal,
 	actPage,
 	endPage,
 	offsetCount,
@@ -432,7 +438,7 @@ defineExpose({
 								})
 							"
 							:columns="direction === 'left' ? leftColumns : rightColumns"
-							:class="{ rightTable: direction === 'right' }"
+							:class="{ rightTable: direction === 'right', hide: direction === 'right' }"
 							:data-source="filteredItems"
 							size="default"
 							:custom-row="
@@ -468,6 +474,18 @@ defineExpose({
 											</span>
 											<span v-else>
 												<a @click="edit(record.key)">Edit</a>
+											</span>
+										</a-space>
+									</div>
+								</template>
+								<template v-else-if="column.dataIndex === 'leftOperation'">
+									<div class="editable-row-operations">
+										<a-space>
+											<span>
+												<a @click="goTo('steam', record)">跳转steam</a>
+											</span>
+											<span>
+												<a @click="goTo('buff', record)">跳转buff</a>
 											</span>
 										</a-space>
 									</div>
@@ -921,10 +939,24 @@ export default {
 
 		//显示隐藏右侧表格
 		toggleRightTable(){
-			const shell:any = this.$refs.transferTable.$el
+			const shell:any = this.transferTable.$el
 			console.log('shell', shell)
 			const rightTable = shell.querySelector('.rightTable')
 			rightTable.classList.toggle('hide')
+		},
+
+		//浏览器跳转
+		goTo(target, record){
+			let link = ''
+			switch(target){
+				case 'steam':
+					link = record.steamUrl
+					break;
+				case 'buff':
+					link = record.refererUrl
+					break;
+			}
+			this.openExternal(link)
 		}
 	},
 }
