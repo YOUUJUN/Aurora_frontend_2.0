@@ -61,6 +61,11 @@ const leftTableColumns = [
 		sorter: (a, b) => a.profits - b.profits,
 	},
 	{
+		dataIndex: 'differentialRate',
+		title: '差价率',
+		sorter: (a, b) => a.differentialRate - b.differentialRate,
+	},
+	{
 		dataIndex: 'priceList',
 		title: '在售价格',
 		customRender : (text, record) => {
@@ -95,6 +100,8 @@ const rightTableColumns = [
 		title: 'operation',
 	},
 ]
+
+const transferTable = ref()
 
 const actPage = ref(1)
 const endPage = ref(2)
@@ -282,6 +289,7 @@ defineExpose({
 	buffData,
 	targetKeys,
 
+	transferTable,
 	actPage,
 	endPage,
 	offsetCount,
@@ -377,20 +385,24 @@ defineExpose({
 				<a-space style="flex-wrap: wrap">
 					<a-input-number v-model:value="offsetCount" addon-before="offset" min="0" step="100" />
 					<a-input-number v-model:value="limitCount" addon-before="limit" min="1" step="150" />
+					
+				</a-space>
+
+				<a-space style="flex-wrap: wrap">
 					<a-button @click="confirmAction(startRefererBuff, 'sticker')">启动REFERER BUFF爬虫_印花</a-button>
-					<a-button @click="confirmAction(startRefererBuff)">启动REFERER BUFF爬虫</a-button>
-					<a-button @click="confirmAction(stopRefererBuff)">关闭REFERER BUFF爬虫</a-button>
-					<a-button @click="confirmAction(gatherRefererBuff)">启动REFERER BUFF数据汇总</a-button>
-					<a-button @click="confirmAction(clearRefererBuff)">清除REFERER BUFF数据</a-button>
+					<a-button @click="confirmAction(startRefererBuff, 'major')">启动REFERER BUFF爬虫</a-button>
 				</a-space>
 
 				<a-space style="flex-wrap: wrap">
 					<a-button @click="confirmAction(stopRefererBuff)">关闭REFERER BUFF爬虫</a-button>
+					<a-button @click="confirmAction(gatherRefererBuff)">启动REFERER BUFF数据汇总</a-button>
+					<a-button @click="confirmAction(clearRefererBuff)">清除REFERER BUFF数据</a-button>
 				</a-space>
 			</section>
 
 			<section class="data-panel bg2">
 				<a-transfer
+					ref="transferTable"
 					v-model:target-keys="targetKeys"
 					:data-source="buffData"
 					:disabled="disabled"
@@ -465,6 +477,9 @@ defineExpose({
 					</template>
 
 					<template #footer="{ direction }">
+						<a-button v-if="direction === 'left'" style="float: left; margin: 5px" @click="toggleRightTable">
+							显示/隐藏右侧表格
+						</a-button>
 						<a-button v-if="direction === 'right'" style="float: left; margin: 5px" @click="saveToSteam">
 							从Steam购买
 						</a-button>
@@ -493,6 +508,7 @@ import {
 	saveHistoryPriceData,
 	startBuffRefererCrawlerLoop,
 	stopBuffRefererCrawlerService,
+	clearRefererBuffCacheData,
 	fetchRefererBuffData,
 	updateBuffCrawlerPass,
 } from '@renderer/api/buff'
@@ -668,7 +684,8 @@ export default {
 					steamUrl: data.steamUrl,
 					refererUrl: data.refererUrl,
 					priceList : data?.priceList || [],
-					lowestBargainPriceList : data?.lowestBargainPriceList || []
+					lowestBargainPriceList : data?.lowestBargainPriceList || [],
+					differentialRate : data?.differentialRate
 				})
 			}
 		},
@@ -873,7 +890,13 @@ export default {
 			}
 		},
 
-		async clearRefererBuff() {},
+		async clearRefererBuff() {
+			const [err, msg] = await errorCaptured(clearRefererBuffCacheData)
+
+			if (msg) {
+				message.success(msg.data.message)
+			}
+		},
 
 		/*---updateToken---*/
 		async upDateLogInfo() {
@@ -895,6 +918,14 @@ export default {
 				console.log('err', err)
 			}
 		},
+
+		//显示隐藏右侧表格
+		toggleRightTable(){
+			const shell:any = this.$refs.transferTable.$el
+			console.log('shell', shell)
+			const rightTable = shell.querySelector('.rightTable')
+			rightTable.classList.toggle('hide')
+		}
 	},
 }
 </script>
@@ -943,5 +974,9 @@ export default {
 
 .rightTable {
 	width: 640px;
+}
+
+.hide{
+	display: none;
 }
 </style>
