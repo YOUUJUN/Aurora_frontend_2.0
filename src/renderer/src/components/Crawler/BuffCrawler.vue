@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import type { Dayjs } from 'dayjs'
+import { EnvEnum } from '@renderer/enums/env_enum'
 
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { message, Modal } from 'ant-design-vue'
@@ -68,15 +69,15 @@ const leftTableColumns = [
 	{
 		dataIndex: 'priceList',
 		title: '在售价格',
-		customRender : (text, record) => {
+		customRender: (text, record) => {
 			return text.value.join(' / ')
-		}
+		},
 	},
 
 	{
-		dataIndex : 'leftOperation',
+		dataIndex: 'leftOperation',
 		title: '跳转',
-	}
+	},
 ]
 
 const rightTableColumns = [
@@ -113,7 +114,10 @@ const endPage = ref(2)
 const offsetCount = ref(0)
 const limitCount = ref(1000)
 const tokenInfo = ref('')
-const servePath = ref("D:\\web_project\\backend")
+console.log('import.meta', import.meta.env)
+console.log('servePath',EnvEnum.servicePath)
+const servePath = ref(EnvEnum.servicePath)
+
 //历史价格数据统计时间
 const statisticalTime = ref<Dayjs>()
 
@@ -391,7 +395,6 @@ defineExpose({
 				<a-space style="flex-wrap: wrap">
 					<a-input-number v-model:value="offsetCount" addon-before="offset" min="0" step="100" />
 					<a-input-number v-model:value="limitCount" addon-before="limit" min="1" step="150" />
-					
 				</a-space>
 
 				<a-space style="flex-wrap: wrap">
@@ -495,7 +498,11 @@ defineExpose({
 					</template>
 
 					<template #footer="{ direction }">
-						<a-button v-if="direction === 'left'" style="float: left; margin: 5px" @click="toggleRightTable">
+						<a-button
+							v-if="direction === 'left'"
+							style="float: left; margin: 5px"
+							@click="toggleRightTable"
+						>
 							显示/隐藏右侧表格
 						</a-button>
 						<a-button v-if="direction === 'right'" style="float: left; margin: 5px" @click="saveToSteam">
@@ -537,7 +544,7 @@ export default {
 	},
 
 	methods: {
-		confirmAction(action, ...params:any[]) {
+		confirmAction(action, ...params: any[]) {
 			let title = ''
 			const funcName = action.name.split(' ').pop()
 			switch (funcName) {
@@ -697,13 +704,13 @@ export default {
 					steamPrice: new Number(data.steamPrice).toFixed(2),
 					difference: new Number(data.difference).toFixed(2),
 					buyNum: data.buyNum,
-					profits : new Number(data.profits).toFixed(2),
+					profits: new Number(data.profits).toFixed(2),
 					buffProfits: new Number(data.buffProfits).toFixed(2),
 					steamUrl: data.steamUrl,
 					refererUrl: data.refererUrl,
-					priceList : data?.priceList || [],
-					lowestBargainPriceList : data?.lowestBargainPriceList || [],
-					differentialRate : data?.differentialRate
+					priceList: data?.priceList || [],
+					lowestBargainPriceList: data?.lowestBargainPriceList || [],
+					differentialRate: data?.differentialRate,
 				})
 			}
 		},
@@ -873,14 +880,14 @@ export default {
 			console.log('referer', referer)
 
 			let params = {
-				offset : this.offsetCount,
-				limit : this.limitCount,
+				offset: this.offsetCount,
+				limit: this.limitCount,
 				referer,
 			}
 
 			const [err, result] = await errorCaptured(startBuffRefererCrawlerLoop, params)
 			if (result) {
-				const {success, msg} = result.data;
+				const { success, msg } = result.data
 				message.warning(msg)
 			}
 
@@ -938,26 +945,26 @@ export default {
 		},
 
 		//显示隐藏右侧表格
-		toggleRightTable(){
-			const shell:any = this.transferTable.$el
+		toggleRightTable() {
+			const shell: any = this.transferTable.$el
 			console.log('shell', shell)
 			const rightTable = shell.querySelector('.rightTable')
 			rightTable.classList.toggle('hide')
 		},
 
 		//浏览器跳转
-		goTo(target, record){
+		goTo(target, record) {
 			let link = ''
-			switch(target){
+			switch (target) {
 				case 'steam':
 					link = record.steamUrl
-					break;
+					break
 				case 'buff':
 					link = record.refererUrl
-					break;
+					break
 			}
 			this.openExternal(link)
-		}
+		},
 	},
 }
 </script>
@@ -990,7 +997,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
-	gap : 10px;
+	gap: 10px;
 	flex-wrap: wrap;
 	padding: 15px 25px;
 	margin-bottom: 10px;
@@ -1008,7 +1015,7 @@ export default {
 	width: 640px;
 }
 
-.hide{
+.hide {
 	display: none;
 }
 </style>
