@@ -9,7 +9,7 @@ function createAxios(options: Partial<ICreateAxiosOptions>, configs: IAxiosStrat
 		Object.assign(
 			{},
 			{
-				baseURL: EnvEnum.baseUrl,
+				baseURL: EnvEnum.apiBaseUrl,
 				headers: { 'Content-Type': ContentTypeEnum.JSON },
 				withCredentials: false,
 				timeout: 9000,
