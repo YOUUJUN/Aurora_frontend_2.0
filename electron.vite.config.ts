@@ -7,10 +7,6 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver, AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 
-// function pathResolve(dir: string) {
-// 	return resolve(process.cwd(), '.', dir)
-// }
-
 export default defineConfig({
 	main: {
 		plugins: [externalizeDepsPlugin()],
@@ -29,12 +25,26 @@ export default defineConfig({
 		plugins: [
 			vue(),
 
-			//Element-plus, ant-design-vue 按需引入
+			// 自动引入
 			AutoImport({
+				include: [
+					/\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
+					/\.vue$/,
+					/\.vue\?vue/, // .vue
+				],
+				imports: ['vue'],
 				resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
+				dts: 'types/auto-imports.d.ts',
+				dirs: ['src/store/modules'],
+				vueTemplate: true, //支持Vue 模版自动引入
 			}),
+
+			// 组件自动引入
 			Components({
+				extensions: ['vue'],
 				resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
+				include: [/\.vue$/, /\.vue\?vue/],
+				dts: 'types/components.d.ts',
 			}),
 		],
 	},
