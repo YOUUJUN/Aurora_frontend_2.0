@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IPurchaseData } from '#renderer/buffCrawler'
+import type { IPurchaseData } from '#renderer/buff_crawler'
 import type { Ref } from 'vue'
 
 import { ref } from 'vue'

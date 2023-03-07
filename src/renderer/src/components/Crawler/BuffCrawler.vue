@@ -13,7 +13,7 @@ import { ref, reactive, createVNode } from 'vue'
 import { useDataStore } from '@renderer/store/modules/data'
 
 // import SocketService from '@renderer/api/socketService'
-import { useSocketIO } from '@renderer/hooks/useSocketIO'
+import { useSocketIO } from '@renderer/hooks/use_socketio'
 
 const { ipcRenderer } = window.electron
 

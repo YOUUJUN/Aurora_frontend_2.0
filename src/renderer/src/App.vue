@@ -112,5 +112,5 @@ button {
 
 <style>
 @import '@renderer/styles/theme/themer.css';
-@import '@renderer/styles/theme/utilityClasses.css';
+@import '@renderer/styles/theme/utility_classes.css';
 </style>
