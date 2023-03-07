@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Dialog from './Dialog.vue'
+import Dialog from '@renderer/components/Root/Player/Dialog.vue'
 
 import url from '@renderer/assets/images/template/youjun.jpg'
 </script>
