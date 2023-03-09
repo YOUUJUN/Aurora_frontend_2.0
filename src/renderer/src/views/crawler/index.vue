@@ -18,14 +18,6 @@ const route = useRoute()
 	</section>
 </template>
 
-<script lang="ts">
-export default {
-	data() {
-		return {}
-	},
-}
-</script>
-
 <style scoped>
 .Crawler {
 	position: absolute;
