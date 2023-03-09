@@ -3,7 +3,7 @@ import { HomeFilled, Tickets, Setting } from '@element-plus/icons-vue'
 import { BugOutlined } from '@ant-design/icons-vue'
 import { ref } from 'vue'
 
-import SettingPanel from '@renderer/views/Setting.vue'
+import SettingPanel from '@renderer/components/Root/Player/Setting.vue'
 
 const settingPanel = ref()
 

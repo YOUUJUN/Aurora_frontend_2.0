@@ -2,18 +2,18 @@ import type { App } from 'vue'
 
 import { createRouter, createWebHistory } from 'vue-router'
 
-import CrawlerVue from '@renderer/views/Crawler.vue'
-import UserCenterVue from '@renderer/components/Root/Player/UserCenter.vue'
-import CrawlerListVue from '@renderer/components/Root/Player/CrawlerList.vue'
-import BuffCrawlerVue from '@renderer/components/Crawler/BuffCrawler.vue'
-import PurchaseAnalyserVue from '@renderer/components/Crawler/PurchaseAnalyser.vue'
-import DataAnalyserVue from '@renderer/components/Crawler/DataAnalyser.vue'
+import CrawlerVue from '@renderer/views/crawler/index.vue'
+import UserCenterVue from '@renderer/views/user_center/index.vue'
+import CrawlerListVue from '@renderer/views/crawler/modules/CrawlerList.vue'
+import BuffCrawlerVue from '@renderer/views/crawler/modules/BuffCrawler.vue'
+import PurchaseAnalyserVue from '@renderer/views/crawler/modules/PurchaseAnalyser.vue'
+import DataAnalyserVue from '@renderer/views/crawler/modules/DataAnalyser.vue'
 
 const routes = [
 	{
 		path: '/',
 		name: 'Home',
-		component: () => import('@renderer/views/Home.vue'),
+		component: () => import('@renderer/components/Root/Player/Home.vue'),
 		children: [
 			{
 				path: '/',

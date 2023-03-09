@@ -1,3 +1,5 @@
+import { EnvEnum } from '@renderer/enums/env_enum'
+
 export interface TsocketInstance {
 	connect: (url?: string) => void
 	registerCallBack: (alia: string, callback) => void
@@ -5,7 +7,7 @@ export interface TsocketInstance {
 	send: (alia: any) => void
 }
 
-const wsURL = `ws://localhost:8888/`
+const wsURL = EnvEnum.socketUrl
 
 export default class SocketService {
 	//socket 单例

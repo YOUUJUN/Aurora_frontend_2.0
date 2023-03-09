@@ -1,4 +1,6 @@
-import { isObject } from "./is"
+import { isObject } from './is'
+
+type TErrorCaptured = [unknown | null, any | null]
 
 /**
  * better error handler for async func
@@ -8,16 +10,14 @@ import { isObject } from "./is"
  * @returns {Promise<*[]>}
  */
 
-export async function errorCaptured(asyncFunc, ...params: any[]) {
+export async function errorCaptured(asyncFunc: Function, ...params: any[]): Promise<TErrorCaptured> {
 	try {
 		const res = await asyncFunc(...params)
 		return [null, res]
-	} catch (e) {
-		return [e, null]
+	} catch (err) {
+		return [err, null]
 	}
 }
-
-
 
 // 深度合并
 export function deepMerge<T = any>(src: any = {}, target: any = {}): T {

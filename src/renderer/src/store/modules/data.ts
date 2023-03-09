@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { store } from '@renderer/store'
 
 interface IDataState {
-	buffData: any[]
+	buffData: TProcessedBuffData
 }
 
 export const useDataStore = defineStore({
@@ -12,10 +12,14 @@ export const useDataStore = defineStore({
 	}),
 
 	actions: {
-		setBuffData(data: any[]): void {
-            console.log('data', data)
+		setBuffData(data: TProcessedBuffData): void {
+			console.log('data', data)
 			this.buffData = data
 		},
+
+		reverseBuffData(){
+			this.buffData.reverse()
+		}
 	},
 })
 

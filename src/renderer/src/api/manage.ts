@@ -1,16 +1,10 @@
-import request from '@renderer/utils/localhttp'
-export function postActionLocal(url: string, parameter?:any) {
-	return request({
-		url,
-		method: 'post',
-		data: parameter,
-	})
+import { defHttp } from '@renderer/utils/http/axios/index'
+const axios = defHttp.getAxios()
+
+export function postActionLocal(url: string, parameter?: any) {
+	return axios.post(url, parameter)
 }
 
-export function getActionLocal(url: string, parameter) {
-	return request({
-		url,
-		method: 'get',
-		params: parameter,
-	})
+export function getActionLocal(url: string, parameter?: any) {
+	return axios.get(url, parameter)
 }
