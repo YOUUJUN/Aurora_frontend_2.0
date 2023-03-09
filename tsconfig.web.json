@@ -25,6 +25,8 @@
       ]
     },
     "types": ["element-plus/global"],
+    "strict": true,
+    "isolatedModules": true, // 将每个文件做为单独的模块 （与 'ts.transpileModule' 类似）.
     "noUnusedParameters": false,
     "noUnusedLocals" : false,
   }
