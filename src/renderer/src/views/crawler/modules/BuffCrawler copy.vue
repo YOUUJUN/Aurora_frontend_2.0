@@ -7,38 +7,13 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { message, Modal } from 'ant-design-vue'
 
 import { sendMessageToNode } from '@renderer/utils/ipc'
+import { errorCaptured } from '@renderer/utils/help'
 
 import { ref, reactive, createVNode } from 'vue'
+import { useDataStore } from '@renderer/store/modules/data'
 
+// import SocketService from '@renderer/api/socketService'
 import { useSocketIO } from '@renderer/hooks/use_socketio'
-
-import useCrawlerCtrl from '@renderer/hooks/use_crawler_ctrl'
-import { useRouter } from 'vue-router'
-
-const {
-	actPage,
-	endPage,
-	offset,
-	limit,
-	token,
-	startBuffCrawlerByPage,
-	stopBuffCrawler,
-	clearBuffData,
-	gatherBuffData,
-	reverseBuff,
-	actBuffHistoryPrices,
-	stopBuffHistoryPrices,
-	fetchHistoryBuffData,
-	saveServerCacheHistoryPrice,
-	startRefererBuff,
-	stopRefererBuff,
-	gatherRefererBuff,
-	clearRefererBuff,
-	updateLogInfo,
-	saveServerCacheData,
-	saveSteamPurchaseData,
-	saveBuffPurchaseData,
-} = useCrawlerCtrl()
 
 const { ipcRenderer } = window.electron
 
@@ -131,11 +106,16 @@ const rightTableColumns = [
 	},
 ]
 
-const transferTable: Ref<HTMLInputElement | null> = ref(null)
+const transferTable: Ref<any> = ref()
 const { openExternal } = <any>window.api
 
+const actPage = ref(1)
+const endPage = ref(2)
+const offsetCount = ref(0)
+const limitCount = ref(1000)
+const tokenInfo = ref('')
 console.log('import.meta', import.meta.env)
-console.log('servePath', EnvEnum.servicePath)
+console.log('servePath',EnvEnum.servicePath)
 const servePath = ref(EnvEnum.servicePath)
 
 //历史价格数据统计时间
@@ -210,7 +190,7 @@ ipcRenderer.on('buffCrawlerClosing', (e, payload) => {
 	message.success('服务关闭成功!')
 })
 
-const startCrawlerServer = (info) => {
+const startBuffCrawler = (info) => {
 	let command = ''
 	if (info === 'dev') {
 		command = 'startDevBuffCrawler'
@@ -243,7 +223,7 @@ const startCrawlerServer = (info) => {
 	})
 }
 
-const stopCrawlerServer = () => {
+const stopBuffCrawler = () => {
 	Modal.confirm({
 		title: '是否确认关闭服务?',
 		icon: createVNode(ExclamationCircleOutlined),
@@ -265,7 +245,7 @@ const stopCrawlerServer = () => {
 	})
 }
 
-const reStartCrawlerServer = () => {
+const reStartBuffCrawler = () => {
 	Modal.confirm({
 		title: '是否确认重启服务?',
 		icon: createVNode(ExclamationCircleOutlined),
@@ -313,138 +293,8 @@ const getBuffCrawlerLog = () => {
 	sendMessageToNode('getBuffCrawlerLog', servePath.value)
 }
 
-function confirmAction(action: Function, ...params: any[]) {
-	let title = ''
-	const funcName = action.name.split(' ').pop()
-	switch (funcName) {
-		case 'startBuffCrawlerByPage':
-			title = '是否启动BUFF爬虫?'
-			break
-		case 'stopBuffCrawler':
-			title = '是否关闭BUFF爬虫?'
-			break
-		case 'clearBuffData':
-			title = '是否清除BUFF数据?'
-			break
-		case 'gatherBuffData':
-			title = '是否创建BUFF数据汇总?'
-			break
-		case 'fetchHistoryBuffData':
-			title = '是否启动BUFF历史数据加载?'
-			break
-		case 'actBuffHistoryPrices':
-			title = '是否启动BUFF历史价格爬虫?'
-			break
-		case 'stopBuffHistoryPrices':
-			title = '是否关闭BUFF历史价格爬虫?'
-			break
-		case 'startRefererBuff':
-			title = '是否启动 REFERER BUFF爬虫?'
-			break
-		case 'stopRefererBuff':
-			title = '是否关闭 REFERER BUFF爬虫?'
-			break
-		case 'gatherRefererBuff':
-			title = '是否启动REFERER BUFF数据汇总?'
-			break
-		case 'clearRefererBuff':
-			title = '是否清除REFERER BUFF数据?'
-			break
-	}
-
-	Modal.confirm({
-		title,
-		icon: createVNode(ExclamationCircleOutlined),
-		onOk() {
-			action.apply(this, params)
-		},
-
-		onCancel() {},
-	})
-}
-
-async function saveToSteam() {
-	if (unref(targetKeys).length < 1) {
-		return
-	}
-
-	const rightData: any[] = []
-	for (let i = 0; i < unref(targetKeys).length; i++) {
-		console.log(targetKeys[i])
-		rightData.push(buffData[targetKeys[i]])
-	}
-
-	console.log('rightData', rightData)
-
-	saveSteamPurchaseData(rightData)
-}
-
-async function saveToBuff() {
-	if (unref(targetKeys).length < 1) {
-		return
-	}
-
-	const rightData: any[] = []
-	for (let i = 0; i < unref(targetKeys).length; i++) {
-		rightData.push(buffData[targetKeys[i]])
-	}
-
-	console.log('rightData', rightData)
-
-	saveBuffPurchaseData(rightData)
-}
-
-//浏览器跳转
-function goTo(target: string, record: Pick<TProcessedBuffData, 'steamUrl' | 'refererUrl'>): void {
-	let link = ''
-	switch (target) {
-		case 'steam':
-			link = record.steamUrl
-			break
-		case 'buff':
-			link = record.refererUrl
-			break
-	}
-	openExternal(link)
-}
-
-//显示隐藏右侧表格
-function toggleRightTable() {
-	const shell: any = transferTable
-	console.log('shell', shell)
-	const rightTable = shell.querySelector('.rightTable')
-	rightTable.classList.toggle('hide')
-}
-
-function doSearch(inputValue, item) {
-	return item.name.indexOf(inputValue) > -1
-}
-
-function resetTransferStyle(params) {
-	if (params.direction === 'left') {
-		return {
-			flex: 1,
-		}
-	} else {
-		return {
-			flex: 0,
-		}
-	}
-}
-
-function analysePurchase() {
-	useRouter().push({
-		name: 'PurchaseAnalyser',
-	})
-}
-
-function analyseData() {
-	useRouter().push({
-		name: 'DataAnalyser',
-	})
-}
-
 defineExpose({
+	tokenInfo,
 	buffData,
 	targetKeys,
 
@@ -452,8 +302,8 @@ defineExpose({
 	openExternal,
 	actPage,
 	endPage,
-	offset,
-	limit,
+	offsetCount,
+	limitCount,
 	statisticalTime,
 })
 </script>
@@ -473,10 +323,10 @@ defineExpose({
 					<a-descriptions-item label="Product">Buff Crawler</a-descriptions-item>
 					<a-descriptions-item label="Control Panel" :span="2">
 						<a-space>
-							<a-button @click="startCrawlerServer('dev')">启动DEV</a-button>
-							<a-button @click="startCrawlerServer('prd')">启动PRD</a-button>
-							<a-button @click="stopCrawlerServer()">关闭</a-button>
-							<a-button @click="reStartCrawlerServer()">重启</a-button>
+							<a-button @click="startBuffCrawler('dev')">启动DEV</a-button>
+							<a-button @click="startBuffCrawler('prd')">启动PRD</a-button>
+							<a-button @click="stopBuffCrawler()">关闭</a-button>
+							<a-button @click="reStartBuffCrawler()">重启</a-button>
 							<a-button @click="getBuffCrawlerLog()">获取打印日志</a-button>
 						</a-space>
 					</a-descriptions-item>
@@ -487,10 +337,10 @@ defineExpose({
 					<a-descriptions-item label="End Time">{{ serverEndTime }}</a-descriptions-item>
 					<a-descriptions-item label="Latest Token" :span="3">
 						<a-input-search
-							v-model:value="token"
+							v-model:value="tokenInfo"
 							placeholder="input latest token"
 							size="large"
-							@search="updateLogInfo(token)"
+							@search="upDateLogInfo"
 						>
 							<template #enterButton>
 								<a-button>更新</a-button>
@@ -516,19 +366,19 @@ defineExpose({
 
 			<section class="ctrlPanel bg2">
 				<a-space style="flex-wrap: wrap">
-					<!-- <a-button @click="confirmAction(startBuffCrawlerByPage)"
+					<!-- <a-button @click="confirmAction(actBuff)"
                         >BUFF爬虫启动！！</a-button
                     > -->
-					<a-button @click="confirmAction(startBuffCrawlerByPage, actPage, endPage)">BUFF启动从</a-button>
+					<a-button @click="confirmAction(actPageBuff)">BUFF启动从</a-button>
 					<a-input-number v-model:value="actPage" addon-before="页数从" min="1" step="150" max="910" />
 					<a-input-number v-model:value="endPage" addon-before="页数到" min="2" step="150" max="910" />
-					<a-button @click="confirmAction(stopBuffCrawler)">BUFF爬虫关闭！！</a-button>
-					<a-button @click="confirmAction(gatherBuffData)">启动BUFF数据汇总</a-button>
+					<a-button @click="confirmAction(stopBuff)">BUFF爬虫关闭！！</a-button>
+					<a-button @click="confirmAction(gatherBuff)">启动BUFF数据汇总</a-button>
 					<a-button @click="reverseBuff()">启动BUFF数据汇总(倒序)</a-button>
-					<a-button @click="confirmAction(fetchHistoryBuffData)">启动BUFF历史数据加载</a-button>
+					<a-button @click="confirmAction(historyBuff)">启动BUFF历史数据加载</a-button>
 					<a-button @click="confirmAction(actBuffHistoryPrices)">BUFF历史价格爬虫启动！！</a-button>
 					<a-button @click="confirmAction(stopBuffHistoryPrices)">BUFF历史价格爬虫关闭！！</a-button>
-					<a-button @click="confirmAction(clearBuffData)">清除BUFF数据！！</a-button>
+					<a-button @click="confirmAction(clearBuff)">清除BUFF数据！！</a-button>
 					<a-button @click="analysePurchase()">分析订单</a-button>
 					<a-button @click="analyseData()">分析数据</a-button>
 					<a-button @click="saveServerCacheData()">保存缓存数据</a-button>
@@ -543,14 +393,12 @@ defineExpose({
 
 			<section class="ctrlPanel bg2">
 				<a-space style="flex-wrap: wrap">
-					<a-input-number v-model:value="offset" addon-before="offset" min="0" step="100" />
-					<a-input-number v-model:value="limit" addon-before="limit" min="1" step="150" />
+					<a-input-number v-model:value="offsetCount" addon-before="offset" min="0" step="100" />
+					<a-input-number v-model:value="limitCount" addon-before="limit" min="1" step="150" />
 				</a-space>
 
 				<a-space style="flex-wrap: wrap">
-					<a-button @click="confirmAction(startRefererBuff, 'sticker', offset, limit)">
-						启动REFERER BUFF爬虫_印花
-					</a-button>
+					<a-button @click="confirmAction(startRefererBuff, 'sticker')">启动REFERER BUFF爬虫_印花</a-button>
 					<a-button @click="confirmAction(startRefererBuff, 'major')">启动REFERER BUFF爬虫</a-button>
 				</a-space>
 
@@ -669,6 +517,457 @@ defineExpose({
 		</el-scrollbar>
 	</div>
 </template>
+
+<script lang="ts">
+import {
+	startBuffCrawlerService,
+	stopBuffCrawlerService,
+	clearBuffCacheData,
+	fetchBuffCacheData,
+	startBuffCrawlerService_history,
+	stopBuffCrawlerService_history,
+	fetchBuffCacheData_history,
+	saveSteamPurchase,
+	saveBufffPurchase,
+	saveGoodsData,
+	saveHistoryPriceData,
+	startBuffRefererCrawlerLoop,
+	stopBuffRefererCrawlerService,
+	clearRefererBuffCacheData,
+	fetchRefererBuffData,
+	updateBuffCrawlerPass,
+} from '@renderer/api/buff'
+
+export default {
+	data() {
+		return {}
+	},
+
+	methods: {
+		confirmAction(action, ...params: any[]) {
+			let title = ''
+			const funcName = action.name.split(' ').pop()
+			switch (funcName) {
+				case 'actBuff':
+					title = '是否启动BUFF爬虫?'
+					break
+				case 'actPageBuff':
+					title = '是否启动BUFF爬虫?'
+					break
+				case 'stopBuff':
+					title = '是否关闭BUFF爬虫?'
+					break
+				case 'gatherBuff':
+					title = '是否创建BUFF数据汇总?'
+					break
+				case 'historyBuff':
+					title = '是否启动BUFF历史数据加载?'
+					break
+				case 'actBuffHistoryPrices':
+					title = '是否启动BUFF历史价格爬虫?'
+					break
+				case 'stopBuffHistoryPrices':
+					title = '是否关闭BUFF历史价格爬虫?'
+					break
+				case 'clearBuff':
+					title = '是否清除BUFF数据?'
+					break
+				case 'startRefererBuff':
+					title = '是否启动 REFERER BUFF爬虫?'
+					break
+				case 'stopRefererBuff':
+					title = '是否关闭 REFERER BUFF爬虫?'
+					break
+				case 'gatherRefererBuff':
+					title = '是否启动REFERER BUFF数据汇总?'
+					break
+				case 'clearRefererBuff':
+					title = '是否清除REFERER BUFF数据?'
+					break
+			}
+
+			Modal.confirm({
+				title,
+				icon: createVNode(ExclamationCircleOutlined),
+				onOk() {
+					return new Promise<void>((resolve, reject) => {
+						action.apply(this, params).then(() => {
+							resolve()
+						})
+					})
+				},
+
+				onCancel() {},
+			})
+		},
+
+		/*---buff service qpi---*/
+		async actBuff() {
+			const [err, msg] = await errorCaptured(startBuffCrawlerService)
+			if (msg) {
+				message.success(msg.data.message)
+			}
+		},
+
+		async actPageBuff() {
+			const [err, msg] = await errorCaptured(startBuffCrawlerService, {
+				startPage: this.actPage,
+				endPage: this.endPage,
+			})
+
+			if (msg) {
+				message.success(msg.data.message)
+			}
+		},
+
+		async stopBuff() {
+			const [err, msg] = await errorCaptured(stopBuffCrawlerService)
+
+			if (msg) {
+				message.success(msg.data.message)
+			}
+		},
+
+		async clearBuff() {
+			const [err, msg] = await errorCaptured(clearBuffCacheData)
+
+			if (msg) {
+				message.success(msg.data.message)
+			}
+		},
+
+		async gatherBuff() {
+			const [err, msg] = await errorCaptured(fetchBuffCacheData)
+			console.log('ok', err, 'msg', msg)
+			if (msg) {
+				console.log('in---')
+				this.processBuffData(msg.data.data)
+				useDataStore().setBuffData(this.buffData)
+				message.success(msg.data.message)
+			}
+		},
+
+		reverseBuff() {
+			if (this.buffData.length === 0) {
+				this.gatherBuff()
+			}
+			this.buffData.reverse()
+		},
+
+		async actBuffHistoryPrices() {
+			const [err, msg] = await errorCaptured(startBuffCrawlerService_history)
+
+			if (msg) {
+				message.success(msg.data.message)
+			}
+		},
+
+		async stopBuffHistoryPrices() {
+			const [err, msg] = await errorCaptured(stopBuffCrawlerService_history)
+
+			if (msg) {
+				message.success(msg.data.message)
+			}
+		},
+
+		async historyBuff() {
+			const [err, msg] = await errorCaptured(fetchBuffCacheData_history)
+
+			if (msg) {
+				this.processBuffData(msg.data.data)
+				message.success(msg.data.message)
+			}
+		},
+
+		analysePurchase() {
+			this.$router.push({
+				name: 'PurchaseAnalyser',
+			})
+		},
+
+		analyseData() {
+			this.$router.push({
+				name: 'DataAnalyser',
+			})
+		},
+
+		/*------*/
+		processBuffData(buffData) {
+			for (let i = 0; i < buffData.length; i++) {
+				const data = buffData[i]
+				this.buffData.push({
+					key: i.toString(),
+					name: data.name,
+					costPerformance: new Number(data.costPerformance).toFixed(2),
+					historyPrices: data.historyPrice,
+					cost: new Number(data.cost).toFixed(2),
+					steamPrice: new Number(data.steamPrice).toFixed(2),
+					difference: new Number(data.difference).toFixed(2),
+					buyNum: data.buyNum,
+					profits: new Number(data.profits).toFixed(2),
+					buffProfits: new Number(data.buffProfits).toFixed(2),
+					steamUrl: data.steamUrl,
+					refererUrl: data.refererUrl,
+					priceList: data?.priceList || [],
+					lowestBargainPriceList: data?.lowestBargainPriceList || [],
+					differentialRate: data?.differentialRate,
+				})
+			}
+		},
+
+		resetTransferStyle(params) {
+			console.log('params', params)
+			if (params.direction === 'left') {
+				return {
+					flex: 1,
+				}
+			} else {
+				return {
+					flex: 0,
+				}
+			}
+		},
+
+		doSearch(inputValue, item) {
+			return item.name.indexOf(inputValue) > -1
+		},
+
+		/*---transfer footer---*/
+
+		async saveToSteam() {
+			const targetKeys = this.targetKeys
+			const buffData = this.buffData
+
+			if (!targetKeys) {
+				return
+			}
+
+			const rightData: any[] = []
+			for (let i = 0; i < targetKeys.length; i++) {
+				console.log(targetKeys[i])
+				rightData.push(buffData[targetKeys[i]])
+			}
+
+			console.log('rightData', rightData)
+
+			const [err, msg] = await errorCaptured(saveSteamPurchase, {
+				goods: rightData,
+				buy_time: new Date().getTime(),
+			})
+
+			if (msg) {
+				if (msg.data.status == 1) {
+					message.success(msg.data.message)
+				} else {
+					message.error(msg.data.message)
+				}
+			}
+
+			if (err) {
+				console.log('err', err)
+			}
+		},
+
+		async saveToBuff() {
+			const targetKeys = this.targetKeys
+			const buffData = this.buffData
+
+			if (!targetKeys) {
+				return
+			}
+
+			const rightData: any[] = []
+			for (let i = 0; i < targetKeys.length; i++) {
+				rightData.push(buffData[targetKeys[i]])
+			}
+
+			console.log('rightData', rightData)
+
+			const [err, msg] = await errorCaptured(saveBufffPurchase, {
+				goods: rightData,
+				buy_time: new Date().getTime(),
+			})
+
+			if (msg) {
+				if (msg.data.status == 1) {
+					message.success(msg.data.message)
+				} else {
+					message.error(msg.data.message)
+				}
+			}
+
+			if (err) {
+				console.log('err', err)
+			}
+		},
+
+		async saveServerCacheData() {
+			const payload = [
+				{
+					name: '折叠刀（★ StatTrak™） | 森林 DDPAT (战痕累累)',
+					difference: 9655.682999999999,
+					cost: '580',
+					steamPrice: '12041.98',
+					costPerformance: 16.647729310344827,
+					buyNum: 0,
+					profits: 7403.832739999999,
+					buffProfits: 565.5,
+					rate: 0.9530392842373098,
+					steamUrl:
+						'https://steamcommunity.com/market/listings/730/%E2%98%85%20StatTrak%E2%84%A2%20Flip%20Knife%20%7C%20Forest%20DDPAT%20%28Battle-Scarred%29',
+					historyUrl:
+						'https://buff.163.com/api/market/goods/price_history/buff?game=csgo&goods_id=43532&currency=CNY&days=30&_=1640246631792',
+					recordUrl:
+						'https://buff.163.com/api/market/goods/bill_order?game=csgo&goods_id=43532&_=1640246631792',
+					refererUrl: 'https://buff.163.com/market/goods?goods_id=43532&from=market',
+				},
+				{
+					name: '暗影双匕（★ StatTrak™） | 森林 DDPAT (战痕累累)',
+					difference: 5730.4095,
+					cost: '388.8',
+					steamPrice: '7199.07',
+					costPerformance: 14.738707561728394,
+					buyNum: 2,
+					profits: 4384.183410000001,
+					buffProfits: 379.08,
+					rate: 0.9473431984964724,
+					steamUrl:
+						'https://steamcommunity.com/market/listings/730/%E2%98%85%20StatTrak%E2%84%A2%20Shadow%20Daggers%20%7C%20Forest%20DDPAT%20%28Battle-Scarred%29',
+					historyUrl:
+						'https://buff.163.com/api/market/goods/price_history/buff?game=csgo&goods_id=43869&currency=CNY&days=30&_=1640245937843',
+					recordUrl:
+						'https://buff.163.com/api/market/goods/bill_order?game=csgo&goods_id=43869&_=1640245937843',
+					refererUrl: 'https://buff.163.com/market/goods?goods_id=43869&from=market',
+				},
+			]
+
+			const [err, msg] = await errorCaptured(saveGoodsData, {
+				goods: payload,
+			})
+
+			if (msg) {
+				console.log('msg', msg)
+			}
+
+			if (err) {
+				console.error('err', err)
+			}
+		},
+
+		async saveServerCacheHistoryPrice() {
+			console.log('statisticalTime', this.statisticalTime)
+			if (!this.statisticalTime) {
+				message.warning('请先选择历史数据统计时间!')
+				return
+			}
+
+			const payload = {
+				statisticalTime: this.statisticalTime?.format('YYYY-MM-DD'),
+			}
+
+			const [err, msg] = await errorCaptured(saveHistoryPriceData, payload)
+
+			if (msg) {
+				console.log('msg', msg)
+			}
+
+			if (err) {
+				console.error('err', err)
+			}
+		},
+
+		async startRefererBuff(referer) {
+			console.log('referer', referer)
+
+			let params = {
+				offset: this.offsetCount,
+				limit: this.limitCount,
+				referer,
+			}
+
+			const [err, result] = await errorCaptured(startBuffRefererCrawlerLoop, params)
+			if (result) {
+				const { success, msg } = result.data
+				message.warning(msg)
+			}
+
+			if (err) {
+				console.error('err', err)
+			}
+		},
+
+		async stopRefererBuff() {
+			const [err, msg] = await errorCaptured(stopBuffRefererCrawlerService)
+
+			if (msg) {
+				message.success(msg.data.message)
+			}
+		},
+
+		async gatherRefererBuff() {
+			const [err, msg] = await errorCaptured(fetchRefererBuffData)
+			console.log('ok', err, 'msg', msg)
+			if (msg) {
+				console.log('in---')
+				this.processBuffData(msg.data.data)
+				useDataStore().setBuffData(this.buffData)
+				message.success(msg.data.message)
+			}
+		},
+
+		async clearRefererBuff() {
+			const [err, msg] = await errorCaptured(clearRefererBuffCacheData)
+
+			if (msg) {
+				message.success(msg.data.message)
+			}
+		},
+
+		/*---updateToken---*/
+		async upDateLogInfo() {
+			const token = this.tokenInfo.trim()
+
+			const [err, msg] = await errorCaptured(updateBuffCrawlerPass, {
+				token,
+			})
+
+			if (msg) {
+				if (msg.data.status == 1) {
+					message.success(msg.data.message)
+				} else {
+					message.error(msg.data.message)
+				}
+			}
+
+			if (err) {
+				console.log('err', err)
+			}
+		},
+
+		//显示隐藏右侧表格
+		toggleRightTable() {
+			const shell: any = this.transferTable.$el
+			console.log('shell', shell)
+			const rightTable = shell.querySelector('.rightTable')
+			rightTable.classList.toggle('hide')
+		},
+
+		//浏览器跳转
+		goTo(target, record) {
+			let link = ''
+			switch (target) {
+				case 'steam':
+					link = record.steamUrl
+					break
+				case 'buff':
+					link = record.refererUrl
+					break
+			}
+			this.openExternal(link)
+		},
+	},
+}
+</script>
 
 <style scoped>
 .BuffCrawler {
