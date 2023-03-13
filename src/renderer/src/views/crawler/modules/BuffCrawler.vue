@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { Dayjs } from 'dayjs'
-import { EnvEnum } from '@renderer/enums/env_enum'
 
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { message, Modal } from 'ant-design-vue'
 
-import { sendMessageToNode } from '@renderer/utils/ipc'
-
 import { ref, reactive, createVNode } from 'vue'
 
-import { useSocketIO } from '@renderer/hooks/use_socketio'
-
 import useCrawlerCtrl from '@renderer/hooks/use_crawler_ctrl'
+import useCrawlerServer from '@renderer/hooks/use_crawler_server'
 import { useRouter } from 'vue-router'
 
 const {
@@ -22,6 +17,7 @@ const {
 	limit,
 	token,
 	buffData,
+	statisticalTime,
 	startBuffCrawlerByPage,
 	stopBuffCrawler,
 	clearBuffData,
@@ -41,7 +37,17 @@ const {
 	saveBuffPurchaseData,
 } = useCrawlerCtrl()
 
-const { ipcRenderer } = window.electron
+const {
+	servePath,
+	serverStatus,
+	serverStatusText,
+	serverStartTime,
+	serverEndTime,
+	startCrawlerServer,
+	stopCrawlerServer,
+	reStartCrawlerServer,
+	getBuffCrawlerLog,
+} = useCrawlerServer()
 
 const originTargetKeys = []
 
@@ -135,26 +141,12 @@ const rightTableColumns = [
 const transferTable: Ref<InstanceType<any>> = ref(null)
 const { openExternal } = <any>window.api
 
-console.log('import.meta', import.meta.env)
-console.log('servePath', EnvEnum.servicePath)
-const servePath = ref(EnvEnum.servicePath)
-
-//历史价格数据统计时间
-const statisticalTime = ref<Dayjs>()
-
 /*--data transfer--*/
 const targetKeys: Ref<any[]> = ref(originTargetKeys)
 const disabled = ref(false)
 const showSearch = ref(true)
 const leftColumns = ref(leftTableColumns)
 const rightColumns = ref(rightTableColumns)
-
-/*--buff--*/
-// const buffData = ref<TProcessedBuffData[]>(useDataStore().buffData)
-const serverStatus = ref('default')
-const serverStatusText = ref('closed')
-const serverStartTime = ref('')
-const serverEndTime = ref('')
 
 /*--修改行--*/
 const editableData = reactive({})
@@ -192,126 +184,6 @@ const getRowSelection = ({ disabled, selectedKeys, onItemSelectAll, onItemSelect
 		},
 		selectedRowKeys: selectedKeys,
 	}
-}
-
-/*--buff--*/
-
-ipcRenderer.on('buffCrawlerRunning', (e, payload) => {
-	console.log('im in!!!!!!!!!!!!!!!!!!!!!!!')
-	serverStatus.value = 'processing'
-	serverStatusText.value = 'Running'
-	serverStartTime.value = new Date().toLocaleString()
-	message.success('服务启动成功!')
-})
-
-ipcRenderer.on('buffCrawlerClosing', (e, payload) => {
-	serverStatus.value = 'default'
-	serverStatusText.value = 'closed'
-	serverEndTime.value = new Date().toLocaleString()
-	message.success('服务关闭成功!')
-})
-
-const startCrawlerServer = (info) => {
-	let command = ''
-	if (info === 'dev') {
-		command = 'startDevBuffCrawler'
-	} else if (info === 'prd') {
-		command = 'startPrdBuffCrawler'
-	}
-	Modal.confirm({
-		title: '是否确认打开服务?',
-		icon: createVNode(ExclamationCircleOutlined),
-		content: '该操作会在后台启动 pm2 buffCrawler 服务',
-		onOk() {
-			return new Promise<void>((resolve, reject) => {
-				console.log('-------------------lalalalalla')
-				sendMessageToNode(command, servePath.value)
-
-				ipcRenderer.once('startBuffCrawlerFailed', (e, payload) => {
-					message.error('服务启动失败!')
-					reject()
-				})
-				ipcRenderer.once('startBuffCrawlerDone', (e, payload) => {
-					resolve()
-					setTimeout(() => {
-						connectSocket()
-					}, 10000)
-				})
-			})
-		},
-
-		onCancel() {},
-	})
-}
-
-const stopCrawlerServer = () => {
-	Modal.confirm({
-		title: '是否确认关闭服务?',
-		icon: createVNode(ExclamationCircleOutlined),
-		content: '该操作会关闭后台 pm2 buffCrawler 服务',
-		onOk() {
-			return new Promise<void>((resolve, reject) => {
-				sendMessageToNode('stopBuffCrawler', servePath.value)
-				ipcRenderer.once('stopBuffCrawlerFailed', (e, payload) => {
-					message.error('服务启动失败!')
-					reject()
-				})
-				ipcRenderer.once('stopBuffCrawlerDone', (e, payload) => {
-					resolve()
-				})
-			})
-		},
-
-		onCancel() {},
-	})
-}
-
-const reStartCrawlerServer = () => {
-	Modal.confirm({
-		title: '是否确认重启服务?',
-		icon: createVNode(ExclamationCircleOutlined),
-		content: '该操作会重启后台 pm2 buffCrawler 服务',
-		onOk() {
-			return new Promise<void>((resolve, reject) => {
-				sendMessageToNode('reStartBuffCrawler', servePath.value)
-				ipcRenderer.once('startBuffCrawlerFailed', (e, payload) => {
-					message.error('服务启动失败!')
-					reject()
-				})
-				ipcRenderer.once('startBuffCrawlerDone', (e, payload) => {
-					resolve()
-					setTimeout(() => {
-						connectSocket()
-					}, 10000)
-				})
-			})
-		},
-
-		onCancel() {},
-	})
-}
-
-const connectSocket = () => {
-	// SocketService.Instance.connect()
-	// const socket = SocketService.Instance
-	// socket.registerCallBack('endLoop', (payload) => {
-	// 	if (payload === 'endLoop') {
-	// 		sendMessageToNode('notifyLoopEnd')
-	// 	}
-	// })
-	// return SocketService.Instance
-	const wsUrl = `ws://localhost:8888/`
-	useSocketIO(wsUrl).socket.once('endLoop', (payload) => {
-		// console.log('payload', payload);
-		// new Notification(`通知！！！`, {
-		//     body: `本次循环任务已经完成！`
-		// });
-		sendMessageToNode('notifyLoopEnd')
-	})
-}
-
-const getBuffCrawlerLog = () => {
-	sendMessageToNode('getBuffCrawlerLog', servePath.value)
 }
 
 function confirmAction(action: Function, ...params: any[]) {
