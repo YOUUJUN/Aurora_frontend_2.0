@@ -21,6 +21,7 @@ const {
 	offset,
 	limit,
 	token,
+	buffData,
 	startBuffCrawlerByPage,
 	stopBuffCrawler,
 	clearBuffData,
@@ -131,7 +132,7 @@ const rightTableColumns = [
 	},
 ]
 
-const transferTable: Ref<HTMLInputElement | null> = ref(null)
+const transferTable: Ref<InstanceType<any>> = ref(null)
 const { openExternal } = <any>window.api
 
 console.log('import.meta', import.meta.env)
@@ -149,7 +150,7 @@ const leftColumns = ref(leftTableColumns)
 const rightColumns = ref(rightTableColumns)
 
 /*--buff--*/
-const buffData: Ref<any[]> = ref([])
+// const buffData = ref<TProcessedBuffData[]>(useDataStore().buffData)
 const serverStatus = ref('default')
 const serverStatusText = ref('closed')
 const serverStartTime = ref('')
@@ -409,9 +410,8 @@ function goTo(target: string, record: Pick<TProcessedBuffData, 'steamUrl' | 'ref
 }
 
 //显示隐藏右侧表格
-function toggleRightTable() {
-	const shell: any = transferTable
-	console.log('shell', shell)
+function toggleRightTable(): void {
+	const shell: any = unref(transferTable).$el
 	const rightTable = shell.querySelector('.rightTable')
 	rightTable.classList.toggle('hide')
 }

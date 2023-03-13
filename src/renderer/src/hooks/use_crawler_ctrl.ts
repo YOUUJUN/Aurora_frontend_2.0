@@ -28,6 +28,7 @@ interface ICrawlerCtrlReturn {
 	offset: Ref<number>
 	limit: Ref<number>
 	token: Ref<string>
+	buffData: Ref<TProcessedBuffData[]>
 	statisticalTime: Ref<Dayjs | undefined>
 	startBuffCrawlerByPage: Function
 	stopBuffCrawler: Function
@@ -76,21 +77,26 @@ function processBuffData(buffData: Array<any>): TProcessedBuffData[] {
 
 const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 	//起始分页数
-	const actPage = ref<number>(1)
+	let actPage = ref<number>(1)
 	//中止分页数
-	const endPage = ref<number>(2)
+	let endPage = ref<number>(2)
 	//历史价格数据统计时间
-	const statisticalTime = ref<Dayjs>()
+	let statisticalTime = ref<Dayjs>()
 	//Referer Buff查询参数
-	const offset = ref<number>(1)
-	const limit = ref<number>(1000)
-	const token = ref<string>('')
+	let offset = ref<number>(1)
+	let limit = ref<number>(1000)
+	let token = ref<string>('')
+
+	let buffData = ref<TProcessedBuffData[]>([])
 
 	//启动buff分页爬虫，默认页数为 1 - 2
-	const startBuffCrawlerByPage = async (startPage: number = 1, endPage: number = 2): Promise<void> => {
+	const startBuffCrawlerByPage = async (
+		start: number = actPage.value,
+		end: number = endPage.value,
+	): Promise<void> => {
 		const [err, msg] = await errorCaptured(startBuffCrawlerService, {
-			startPage,
-			endPage,
+			startPage: start,
+			endPage: end,
 		})
 
 		if (err) {
@@ -146,6 +152,7 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 			const processedBuffData = processBuffData(data)
 			useDataStore().setBuffData(processedBuffData)
 			returnData = processedBuffData
+			buffData.value = processedBuffData
 		}
 
 		return returnData
@@ -205,13 +212,14 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 			const processedBuffData = processBuffData(data)
 			useDataStore().setBuffData(processedBuffData)
 			returnData = processedBuffData
+			buffData.value = processedBuffData
 		}
 
 		return returnData
 	}
 
 	//保存缓存历史价格数据
-	const saveServerCacheHistoryPrice = async (time: Dayjs): Promise<void> => {
+	const saveServerCacheHistoryPrice = async (time: Dayjs | undefined = statisticalTime.value): Promise<void> => {
 		if (!time) {
 			Message.warning('请先选择历史数据统计时间!')
 			return
@@ -235,10 +243,14 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 	}
 
 	//启动Referer Buff爬虫
-	const startRefererBuff = async (referer: string, offset: number = 0, limit: number = 1000): Promise<void> => {
+	const startRefererBuff = async (
+		referer: string,
+		offsetCount: number = offset.value,
+		limitCount: number = limit.value,
+	): Promise<void> => {
 		let params = {
-			offset,
-			limit,
+			offset: offsetCount,
+			limit: limitCount,
 			referer,
 		}
 
@@ -283,6 +295,7 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 		if (status) {
 			const processedBuffData = processBuffData(data)
 			useDataStore().setBuffData(processedBuffData)
+			buffData.value = processedBuffData
 
 			Message.success(message)
 		}
@@ -303,9 +316,9 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 	}
 
 	//更新爬虫程序登录信息
-	const updateLogInfo = async (token: string): Promise<void> => {
+	const updateLogInfo = async (tokenValue: string = token.value): Promise<void> => {
 		const [err, msg] = await errorCaptured(updateBuffCrawlerPass, {
-			token,
+			token: tokenValue,
 		})
 
 		if (err) {
@@ -434,6 +447,7 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 		offset,
 		limit,
 		token,
+		buffData,
 		statisticalTime,
 		startBuffCrawlerByPage,
 		stopBuffCrawler,
