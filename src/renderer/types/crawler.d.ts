@@ -1,4 +1,4 @@
-type TProcessedBuffData = Array<{
+type TProcessedBuffData = {
 	key: string
 	name: string
 	costPerformance: string
@@ -14,4 +14,4 @@ type TProcessedBuffData = Array<{
 	priceList: Array<string | number>
 	lowestBargainPriceList: Array<string | number>
 	differentialRate: Array<string | number>
-}>
+}

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { store } from '@renderer/store'
 
 interface IDataState {
-	buffData: TProcessedBuffData
+	buffData: TProcessedBuffData[]
 }
 
 export const useDataStore = defineStore({
@@ -12,7 +12,7 @@ export const useDataStore = defineStore({
 	}),
 
 	actions: {
-		setBuffData(data: TProcessedBuffData): void {
+		setBuffData(data: TProcessedBuffData[]): void {
 			console.log('data', data)
 			this.buffData = data
 		},
