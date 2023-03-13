@@ -519,7 +519,7 @@ defineExpose({
 					<!-- <a-button @click="confirmAction(startBuffCrawlerByPage)"
                         >BUFF爬虫启动！！</a-button
                     > -->
-					<a-button @click="confirmAction(startBuffCrawlerByPage, actPage, endPage)">BUFF启动从</a-button>
+					<a-button @click="confirmAction(startBuffCrawlerByPage)">BUFF启动从</a-button>
 					<a-input-number v-model:value="actPage" addon-before="页数从" min="1" step="150" max="910" />
 					<a-input-number v-model:value="endPage" addon-before="页数到" min="2" step="150" max="910" />
 					<a-button @click="confirmAction(stopBuffCrawler)">BUFF爬虫关闭！！</a-button>
@@ -548,9 +548,7 @@ defineExpose({
 				</a-space>
 
 				<a-space style="flex-wrap: wrap">
-					<a-button @click="confirmAction(startRefererBuff, 'sticker', offset, limit)">
-						启动REFERER BUFF爬虫_印花
-					</a-button>
+					<a-button @click="confirmAction(startRefererBuff, 'sticker')">启动REFERER BUFF爬虫_印花</a-button>
 					<a-button @click="confirmAction(startRefererBuff, 'major')">启动REFERER BUFF爬虫</a-button>
 				</a-space>
 
