@@ -329,9 +329,9 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 
 		if (msg) {
 			if (status == 1) {
-				message.success(msg.data.message)
+				Message.success(msg.data.message)
 			} else {
-				message.error(msg.data.message)
+				Message.error(msg.data.message)
 			}
 		}
 	}
@@ -413,7 +413,7 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 		}
 	}
 
-	const saveBuffPurchaseData = async (goods: any[]): Promise<void> => {
+	const saveBuffPurchaseData = async (goods: TProcessedBuffData[]): Promise<void> => {
 		if (goods.length < 1) {
 			return
 		}
