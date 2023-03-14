@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
+import type { Table } from 'ant-design-vue'
 
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
-import { message, Modal } from 'ant-design-vue'
+import { Modal } from 'ant-design-vue'
 
 import { ref, reactive, createVNode } from 'vue'
 
 import useCrawlerCtrl from '@renderer/hooks/use_crawler_ctrl'
 import useCrawlerServer from '@renderer/hooks/use_crawler_server'
 import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const {
 	actPage,
@@ -49,9 +51,57 @@ const {
 	getBuffCrawlerLog,
 } = useCrawlerServer()
 
-const originTargetKeys = []
+function confirmAction(action: Function, ...params: any[]): void {
+	let title = ''
+	const funcName = action.name.split(' ').pop()
+	switch (funcName) {
+		case 'startBuffCrawlerByPage':
+			title = '是否启动BUFF爬虫?'
+			break
+		case 'stopBuffCrawler':
+			title = '是否关闭BUFF爬虫?'
+			break
+		case 'clearBuffData':
+			title = '是否清除BUFF数据?'
+			break
+		case 'gatherBuffData':
+			title = '是否创建BUFF数据汇总?'
+			break
+		case 'fetchHistoryBuffData':
+			title = '是否启动BUFF历史数据加载?'
+			break
+		case 'actBuffHistoryPrices':
+			title = '是否启动BUFF历史价格爬虫?'
+			break
+		case 'stopBuffHistoryPrices':
+			title = '是否关闭BUFF历史价格爬虫?'
+			break
+		case 'startRefererBuff':
+			title = '是否启动 REFERER BUFF爬虫?'
+			break
+		case 'stopRefererBuff':
+			title = '是否关闭 REFERER BUFF爬虫?'
+			break
+		case 'gatherRefererBuff':
+			title = '是否启动REFERER BUFF数据汇总?'
+			break
+		case 'clearRefererBuff':
+			title = '是否清除REFERER BUFF数据?'
+			break
+	}
 
-const leftTableColumns = [
+	Modal.confirm({
+		title,
+		icon: createVNode(ExclamationCircleOutlined),
+		onOk() {
+			action.apply(this, params)
+		},
+
+		onCancel() {},
+	})
+}
+
+const leftColumns = [
 	{
 		dataIndex: 'name',
 		title: '名称',
@@ -112,7 +162,7 @@ const leftTableColumns = [
 	},
 ]
 
-const rightTableColumns = [
+const rightColumns = [
 	{
 		dataIndex: 'name',
 		title: '名称',
@@ -138,18 +188,15 @@ const rightTableColumns = [
 	},
 ]
 
-const transferTable: Ref<InstanceType<any>> = ref(null)
+const transferTable: Ref<InstanceType<any>> = ref()
 const { openExternal } = <any>window.api
 
 /*--data transfer--*/
-const targetKeys: Ref<any[]> = ref(originTargetKeys)
-const disabled = ref(false)
-const showSearch = ref(true)
-const leftColumns = ref(leftTableColumns)
-const rightColumns = ref(rightTableColumns)
+const targetKeys = ref<string[]>([])
+const disabled = ref<boolean>(false)
 
 /*--修改行--*/
-const editableData = reactive({})
+const editableData = reactive<Partial<TProcessedBuffData>>({})
 const edit = (key) => {
 	editableData[key] = buffData.value.filter((item) => key === item.key)[0]
 }
@@ -162,9 +209,7 @@ const cancel = (key) => {
 }
 
 const onChange = (nextTargetKeys, direction, moveKeys) => {
-	console.log('nextTargetKeys', nextTargetKeys)
 	const rightData: any[] = []
-	console.log('buffData', buffData)
 	for (let i = 0; i < nextTargetKeys.length; i++) {
 		rightData.push(buffData.value[nextTargetKeys[i]])
 	}
@@ -186,85 +231,21 @@ const getRowSelection = ({ disabled, selectedKeys, onItemSelectAll, onItemSelect
 	}
 }
 
-function confirmAction(action: Function, ...params: any[]) {
-	let title = ''
-	const funcName = action.name.split(' ').pop()
-	switch (funcName) {
-		case 'startBuffCrawlerByPage':
-			title = '是否启动BUFF爬虫?'
-			break
-		case 'stopBuffCrawler':
-			title = '是否关闭BUFF爬虫?'
-			break
-		case 'clearBuffData':
-			title = '是否清除BUFF数据?'
-			break
-		case 'gatherBuffData':
-			title = '是否创建BUFF数据汇总?'
-			break
-		case 'fetchHistoryBuffData':
-			title = '是否启动BUFF历史数据加载?'
-			break
-		case 'actBuffHistoryPrices':
-			title = '是否启动BUFF历史价格爬虫?'
-			break
-		case 'stopBuffHistoryPrices':
-			title = '是否关闭BUFF历史价格爬虫?'
-			break
-		case 'startRefererBuff':
-			title = '是否启动 REFERER BUFF爬虫?'
-			break
-		case 'stopRefererBuff':
-			title = '是否关闭 REFERER BUFF爬虫?'
-			break
-		case 'gatherRefererBuff':
-			title = '是否启动REFERER BUFF数据汇总?'
-			break
-		case 'clearRefererBuff':
-			title = '是否清除REFERER BUFF数据?'
-			break
-	}
-
-	Modal.confirm({
-		title,
-		icon: createVNode(ExclamationCircleOutlined),
-		onOk() {
-			action.apply(this, params)
-		},
-
-		onCancel() {},
-	})
-}
-
-async function saveToSteam() {
+function savePurchaseData(target: string): void {
 	if (unref(targetKeys).length < 1) {
 		return
 	}
 
-	const rightData: any[] = []
-	for (let i = 0; i < unref(targetKeys).length; i++) {
-		console.log(targetKeys[i])
-		rightData.push(buffData[targetKeys[i]])
-	}
-
-	console.log('rightData', rightData)
-
-	saveSteamPurchaseData(rightData)
-}
-
-async function saveToBuff() {
-	if (unref(targetKeys).length < 1) {
-		return
-	}
-
-	const rightData: any[] = []
+	const rightData: TProcessedBuffData[] = []
 	for (let i = 0; i < unref(targetKeys).length; i++) {
 		rightData.push(buffData[targetKeys[i]])
 	}
 
-	console.log('rightData', rightData)
-
-	saveBuffPurchaseData(rightData)
+	if (target === 'steam') {
+		saveSteamPurchaseData(rightData)
+	} else if (target === 'buff') {
+		saveBuffPurchaseData(rightData)
+	}
 }
 
 //浏览器跳转
@@ -283,7 +264,7 @@ function goTo(target: string, record: Pick<TProcessedBuffData, 'steamUrl' | 'ref
 
 //显示隐藏右侧表格
 function toggleRightTable(): void {
-	const shell: any = unref(transferTable).$el
+	const shell = unref(transferTable).$el
 	const rightTable = shell.querySelector('.rightTable')
 	rightTable.classList.toggle('hide')
 }
@@ -303,31 +284,6 @@ function resetTransferStyle(params) {
 		}
 	}
 }
-
-function analysePurchase() {
-	useRouter().push({
-		name: 'PurchaseAnalyser',
-	})
-}
-
-function analyseData() {
-	useRouter().push({
-		name: 'DataAnalyser',
-	})
-}
-
-defineExpose({
-	buffData,
-	targetKeys,
-
-	transferTable,
-	openExternal,
-	actPage,
-	endPage,
-	offset,
-	limit,
-	statisticalTime,
-})
 </script>
 
 <template>
@@ -401,8 +357,8 @@ defineExpose({
 					<a-button @click="confirmAction(actBuffHistoryPrices)">BUFF历史价格爬虫启动！！</a-button>
 					<a-button @click="confirmAction(stopBuffHistoryPrices)">BUFF历史价格爬虫关闭！！</a-button>
 					<a-button @click="confirmAction(clearBuffData)">清除BUFF数据！！</a-button>
-					<a-button @click="analysePurchase()">分析订单</a-button>
-					<a-button @click="analyseData()">分析数据</a-button>
+					<a-button @click="router.push({ name: 'PurchaseAnalyser' })">分析订单</a-button>
+					<a-button @click="router.push({ name: 'DataAnalyser' })">分析数据</a-button>
 					<a-button @click="saveServerCacheData()">保存缓存数据</a-button>
 					<a-date-picker
 						v-model:value="statisticalTime"
@@ -437,7 +393,7 @@ defineExpose({
 					v-model:target-keys="targetKeys"
 					:data-source="buffData"
 					:disabled="disabled"
-					:show-search="showSearch"
+					:show-search="true"
 					:show-select-all="true"
 					:filter-option="doSearch"
 					:list-style="resetTransferStyle"
@@ -527,10 +483,18 @@ defineExpose({
 						>
 							显示/隐藏右侧表格
 						</a-button>
-						<a-button v-if="direction === 'right'" style="float: left; margin: 5px" @click="saveToSteam">
+						<a-button
+							v-if="direction === 'right'"
+							style="float: left; margin: 5px"
+							@click="savePurchaseData('steam')"
+						>
 							从Steam购买
 						</a-button>
-						<a-button v-if="direction === 'right'" style="float: left; margin: 5px" @click="saveToBuff">
+						<a-button
+							v-if="direction === 'right'"
+							style="float: left; margin: 5px"
+							@click="savePurchaseData('buff')"
+						>
 							从Buff购买
 						</a-button>
 					</template>
