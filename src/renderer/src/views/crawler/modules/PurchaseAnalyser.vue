@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import type { IPurchaseData } from '#renderer/buff_crawler'
-
 import { message } from 'ant-design-vue'
 import { errorCaptured } from '@renderer/utils/help'
+import { fetchBuffPurchaseData, fetchSteamPurchaseData } from '@renderer/api/buff'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
-import { postActionLocal } from '@renderer/api/manage'
+interface IPurchaseData {
+	key: string
+	name: string
+	buff_price: number | string
+	steam_price: number | string
+	self_buy_num: number
+	buy_time: string
+}
 
 const columns = [
 	{
@@ -43,6 +51,45 @@ const buffPurchaseData = ref<any[]>([])
 
 const doSearch = (inputValue, item) => {
 	return item.name.indexOf(inputValue) > -1
+}
+
+function processData(payload: any[]): IPurchaseData[] {
+	const newData: IPurchaseData[] = []
+	for (let i = 0; i < payload.length; i++) {
+		const data = payload[i]
+		newData.push({
+			key: i.toString(),
+			name: data.goods_name,
+			buff_price: new Number(data.buff_price).toFixed(2),
+			steam_price: new Number(data.steam_price).toFixed(2),
+			self_buy_num: data.buy_num,
+			buy_time: data.buy_time,
+		})
+	}
+
+	return newData
+}
+
+async function getSteamPurchases() {
+	const [err, msg] = await errorCaptured(fetchSteamPurchaseData)
+
+	if (msg) {
+		steamPurchaseData.value = processData(msg.data.data)
+		message.success(msg.data.message)
+	}
+}
+
+async function getBuffPurchases() {
+	const [err, msg] = await errorCaptured(fetchBuffPurchaseData)
+
+	if (msg) {
+		buffPurchaseData.value = processData(msg.data.data)
+		message.success(msg.data.message)
+	}
+}
+
+function goBack() {
+	router.back()
 }
 
 defineExpose({
@@ -115,50 +162,7 @@ defineExpose({
 
 <script lang="ts">
 export default {
-	methods: {
-		async getSteamPurchases() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/getSteamPurchases')
-
-			if (msg) {
-				console.log('msg', msg)
-				this.steamPurchaseData = this.processData(msg.data.data)
-				message.success(msg.data.message)
-			}
-		},
-
-		async getBuffPurchases() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/getBuffPurchases')
-
-			if (msg) {
-				console.log('msg', msg)
-				this.buffPurchaseData = this.processData(msg.data.data)
-				message.success(msg.data.message)
-			}
-		},
-
-		/*------*/
-		processData(payload) {
-			console.log('payload', payload)
-			const newData: IPurchaseData[] = []
-			for (let i = 0; i < payload.length; i++) {
-				const data = payload[i]
-				newData.push({
-					key: i.toString(),
-					name: data.goods_name,
-					buff_price: new Number(data.buff_price).toFixed(2),
-					steam_price: new Number(data.steam_price).toFixed(2),
-					self_buy_num: data.buy_num,
-					buy_time: data.buy_time,
-				})
-			}
-
-			return newData
-		},
-
-		goBack() {
-			this.$router.back()
-		},
-	},
+	methods: {},
 }
 </script>
 
