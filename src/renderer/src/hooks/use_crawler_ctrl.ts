@@ -30,7 +30,7 @@ interface ICrawlerCtrlReturn {
 	token: Ref<string>
 	buffData: Ref<TProcessedBuffData[]>
 	statisticalTime: Ref<Dayjs | undefined>
-	startBuffCrawlerByPage: (start: number, end: number) => Promise<void>
+	startBuffCrawlerByPage: (start?: number, end?: number) => Promise<void>
 	stopBuffCrawler: () => Promise<void>
 	clearBuffData: () => Promise<void>
 	gatherBuffData: () => Promise<TProcessedBuffData[]>
@@ -38,8 +38,8 @@ interface ICrawlerCtrlReturn {
 	actBuffHistoryPrices: () => Promise<void>
 	stopBuffHistoryPrices: () => Promise<void>
 	fetchHistoryBuffData: () => Promise<TProcessedBuffData[]>
-	saveServerCacheHistoryPrice: (time: Dayjs | undefined) => Promise<void>
-	startRefererBuff: (referer: string, offsetCount: number, limitCount: number) => Promise<void>
+	saveServerCacheHistoryPrice: (time?: Dayjs | undefined) => Promise<void>
+	startRefererBuff: (referer: string, offsetCount?: number, limitCount?: number) => Promise<void>
 	stopRefererBuff: () => Promise<void>
 	gatherRefererBuff: () => Promise<void>
 	clearRefererBuff: () => Promise<void>
