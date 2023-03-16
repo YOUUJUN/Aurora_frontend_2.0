@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Ref } from 'vue'
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { Modal } from 'ant-design-vue'
 
@@ -186,7 +185,7 @@ const rightColumns = [
 	},
 ]
 
-const transferTable: Ref<InstanceType<any>> = ref()
+const transferTable = ref<InstanceType<any>>()
 const { openExternal } = window.api
 
 /*--data transfer--*/

@@ -1,40 +1,19 @@
 <script setup lang="ts">
-import type { Ref } from 'vue'
 import { onMounted } from 'vue'
 
-import * as echarts from 'echarts'
-import { ref, nextTick } from 'vue'
+import { useDataManage } from '@renderer/hooks/use_data_manage'
 
-import { useRoute } from 'vue-router'
-import { useDataStore } from '@renderer/store/modules/data'
+import * as echarts from 'echarts'
 
 const { openExternal } = <any>window.api
 
 type EChartsOption = echarts.EChartsOption
 
-let renderCount: Ref<number> = ref(12)
+let renderCount = ref<number>(0)
 
-function splitIntoThree(arr) {
-	const chunkSize = Math.ceil(arr.length / 3)
-	return [arr.slice(0, chunkSize), arr.slice(chunkSize, chunkSize * 2), arr.slice(chunkSize * 2)]
-}
+const { splitIntoEqualChunks } = useDataManage<TProcessedBuffData>()
 
-function splitIntoChunks(arr: any[], chunkSize: number) {
-	const chunks: any[] = []
-	let i = 0
-	while (i < arr.length) {
-		chunks.push(arr.slice(i, i + chunkSize))
-		i += chunkSize
-	}
-	return chunks
-}
-
-function splitIntoEqualChunks(arr, chunkCount) {
-	const chunkSize = Math.ceil(arr.length / chunkCount)
-	return splitIntoChunks(arr, chunkSize)
-}
-
-const drawChartByChunk = (data: Array<any>, chunkCount: number) => {
+const drawChartByChunk = (data: TProcessedBuffData[], chunkCount: number): void => {
 	const splitData = splitIntoEqualChunks(data, chunkCount)
 
 	renderCount.value = chunkCount
@@ -153,20 +132,17 @@ onMounted(() => {
 		return
 	}
 
-	const LowCostData = buffData.filter((item) => {
+	const LowCostData: TProcessedBuffData[] = buffData.filter((item) => {
 		if (parseInt(item.cost) <= 300) {
 			return item
 		}
+		return
 	})
 
-	LowCostData.sort((a, b) => b.costPerformance - a.costPerformance)
+	LowCostData.sort((a, b) => Number(b.costPerformance) - Number(a.costPerformance))
 
-	drawChartByChunk(<any[]>LowCostData, 100)
+	drawChartByChunk(LowCostData, 100)
 })
-
-function sayHi() {
-	console.log('hi')
-}
 
 defineExpose({
 	openExternal,
@@ -188,14 +164,6 @@ defineExpose({
 		</el-scrollbar>
 	</article>
 </template>
-
-<script lang="ts">
-export default {
-	data() {
-		return {}
-	},
-}
-</script>
 
 <style scoped>
 .root {

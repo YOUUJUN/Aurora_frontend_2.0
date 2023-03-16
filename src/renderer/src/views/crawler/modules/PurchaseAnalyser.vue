@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { IPurchaseData } from '#renderer/buff_crawler'
-import type { Ref } from 'vue'
 
-import { ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { errorCaptured } from '@renderer/utils/help'
 
@@ -38,37 +36,10 @@ const columns = [
 	},
 ]
 
-const routes = ref([
-	{
-		path: '/',
-		breadcrumbName: 'home',
-	},
+const tabActiveKey = ref<string>('1')
 
-	{
-		path: '/CrawlerList',
-		breadcrumbName: 'first',
-	},
-
-	{
-		path: '/',
-		breadcrumbName: 'second',
-		children: [
-			{
-				path: '/BuffCrawler',
-				breadcrumbName: 'BuffCrawler',
-			},
-			{
-				path: '/PurchaseAnalyser',
-				breadcrumbName: 'Layout',
-			},
-		],
-	},
-])
-
-const tabActiveKey = ref('1')
-
-const steamPurchaseData: Ref<any[]> = ref([])
-const buffPurchaseData: Ref<any[]> = ref([])
+const steamPurchaseData = ref<any[]>([])
+const buffPurchaseData = ref<any[]>([])
 
 const doSearch = (inputValue, item) => {
 	return item.name.indexOf(inputValue) > -1
@@ -89,19 +60,6 @@ defineExpose({
 				sub-title="This is a subtitle"
 				@back="goBack()"
 			/>
-			<!-- <section class="breadCrumbPanel bg2">
-                <a-breadcrumb :routes="routes">
-                    <template #itemRender="{ route, params, routes, paths }">
-                        <span
-                            v-if="routes.indexOf(route) === routes.length - 1"
-                            >{{ route.breadcrumbName }}</span
-                        >
-                        <router-link v-else :to="paths.join('/')">{{
-                            route.breadcrumbName
-                        }}</router-link>
-                    </template>
-                </a-breadcrumb>
-            </section> -->
 
 			<a-tabs v-model:activeKey="tabActiveKey" size="large" centered>
 				<a-tab-pane key="1" tab="Steam Purchases">
