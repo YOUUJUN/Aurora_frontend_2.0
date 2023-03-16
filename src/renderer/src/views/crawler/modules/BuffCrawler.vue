@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { Table } from 'ant-design-vue'
-
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { Modal } from 'ant-design-vue'
 
-import { ref, reactive, createVNode } from 'vue'
+import { createVNode } from 'vue'
 
 import useCrawlerCtrl from '@renderer/hooks/use_crawler_ctrl'
 import useCrawlerServer from '@renderer/hooks/use_crawler_server'
@@ -189,7 +187,7 @@ const rightColumns = [
 ]
 
 const transferTable: Ref<InstanceType<any>> = ref()
-const { openExternal } = <any>window.api
+const { openExternal } = window.api
 
 /*--data transfer--*/
 const targetKeys = ref<string[]>([])
@@ -197,25 +195,25 @@ const disabled = ref<boolean>(false)
 
 /*--修改行--*/
 const editableData = reactive<Partial<TProcessedBuffData>>({})
-const edit = (key) => {
+const edit = (key): void => {
 	editableData[key] = buffData.value.filter((item) => key === item.key)[0]
 }
-const save = (key) => {
+const save = (key): void => {
 	Object.assign(buffData.value.filter((item) => key === item.key)[0], editableData[key])
 	delete editableData[key]
 }
-const cancel = (key) => {
+const cancel = (key): void => {
 	delete editableData[key]
 }
 
-const onChange = (nextTargetKeys, direction, moveKeys) => {
-	const rightData: any[] = []
+const onChange = (nextTargetKeys, direction, moveKeys): void => {
+	const rightData: TProcessedBuffData[] = []
 	for (let i = 0; i < nextTargetKeys.length; i++) {
 		rightData.push(buffData.value[nextTargetKeys[i]])
 	}
 }
 
-const getRowSelection = ({ disabled, selectedKeys, onItemSelectAll, onItemSelect }) => {
+const getRowSelection = ({ disabled, selectedKeys, onItemSelectAll, onItemSelect }): object => {
 	return {
 		getCheckboxProps: (item) => ({
 			disabled: disabled || item.disabled,
@@ -269,11 +267,11 @@ function toggleRightTable(): void {
 	rightTable.classList.toggle('hide')
 }
 
-function doSearch(inputValue, item) {
+function doSearch(inputValue, item): boolean {
 	return item.name.indexOf(inputValue) > -1
 }
 
-function resetTransferStyle(params) {
+function resetTransferStyle(params): object {
 	if (params.direction === 'left') {
 		return {
 			flex: 1,
