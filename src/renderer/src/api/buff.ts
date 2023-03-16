@@ -22,6 +22,12 @@ const fetchRefererBuffData = (params?: Object) => postActionLocal('/gatherRefere
 
 const updateBuffCrawlerPass = (params?: Object) => postActionLocal('/updateLogInfo', params)
 
+//获取steam订单数据
+const fetchSteamPurchaseData = (params?: Object) => postActionLocal('/getSteamPurchases', params)
+
+//获取buff订单数据
+const fetchBuffPurchaseData = (params?: Object) => postActionLocal('/getBuffPurchases', params)
+
 export {
 	startBuffCrawlerService,
 	stopBuffCrawlerService,
@@ -39,4 +45,6 @@ export {
 	clearRefererBuffCacheData,
 	fetchRefererBuffData,
 	updateBuffCrawlerPass,
+	fetchSteamPurchaseData,
+	fetchBuffPurchaseData,
 }

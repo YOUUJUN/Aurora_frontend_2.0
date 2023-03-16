@@ -14,11 +14,11 @@ type TUseCrawlerServerReturn = {
 	serverStartTime: Ref<string>
 	serverEndTime: Ref<string>
 	serverSocketInstance: Socket
-	sendMessageToNode: Function
-	startCrawlerServer: Function
-	stopCrawlerServer: Function
-	reStartCrawlerServer: Function
-	getBuffCrawlerLog: Function
+	sendMessageToNode: (message: string, payload?: any) => void
+	startCrawlerServer: (info: string) => void
+	stopCrawlerServer: () => void
+	reStartCrawlerServer: () => void
+	getBuffCrawlerLog: () => void
 }
 
 const useCrawlerServer = (): TUseCrawlerServerReturn => {
@@ -55,7 +55,7 @@ const useCrawlerServer = (): TUseCrawlerServerReturn => {
 		})
 	}
 
-	const startCrawlerServer = (info) => {
+	const startCrawlerServer = (info: string) => {
 		let command = ''
 		if (info === 'dev') {
 			command = 'startDevBuffCrawler'

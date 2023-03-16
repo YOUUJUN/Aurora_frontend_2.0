@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import type { IPurchaseData } from '#renderer/buff_crawler'
-import type { Ref } from 'vue'
-
-import { ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { errorCaptured } from '@renderer/utils/help'
+import { fetchBuffPurchaseData, fetchSteamPurchaseData } from '@renderer/api/buff'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
-import { postActionLocal } from '@renderer/api/manage'
+interface IPurchaseData {
+	key: string
+	name: string
+	buff_price: number | string
+	steam_price: number | string
+	self_buy_num: number
+	buy_time: string
+}
 
 const columns = [
 	{
@@ -38,40 +44,52 @@ const columns = [
 	},
 ]
 
-const routes = ref([
-	{
-		path: '/',
-		breadcrumbName: 'home',
-	},
+const tabActiveKey = ref<string>('1')
 
-	{
-		path: '/CrawlerList',
-		breadcrumbName: 'first',
-	},
-
-	{
-		path: '/',
-		breadcrumbName: 'second',
-		children: [
-			{
-				path: '/BuffCrawler',
-				breadcrumbName: 'BuffCrawler',
-			},
-			{
-				path: '/PurchaseAnalyser',
-				breadcrumbName: 'Layout',
-			},
-		],
-	},
-])
-
-const tabActiveKey = ref('1')
-
-const steamPurchaseData: Ref<any[]> = ref([])
-const buffPurchaseData: Ref<any[]> = ref([])
+const steamPurchaseData = ref<any[]>([])
+const buffPurchaseData = ref<any[]>([])
 
 const doSearch = (inputValue, item) => {
 	return item.name.indexOf(inputValue) > -1
+}
+
+function processData(payload: any[]): IPurchaseData[] {
+	const newData: IPurchaseData[] = []
+	for (let i = 0; i < payload.length; i++) {
+		const data = payload[i]
+		newData.push({
+			key: i.toString(),
+			name: data.goods_name,
+			buff_price: new Number(data.buff_price).toFixed(2),
+			steam_price: new Number(data.steam_price).toFixed(2),
+			self_buy_num: data.buy_num,
+			buy_time: data.buy_time,
+		})
+	}
+
+	return newData
+}
+
+async function getSteamPurchases() {
+	const [err, msg] = await errorCaptured(fetchSteamPurchaseData)
+
+	if (msg) {
+		steamPurchaseData.value = processData(msg.data.data)
+		message.success(msg.data.message)
+	}
+}
+
+async function getBuffPurchases() {
+	const [err, msg] = await errorCaptured(fetchBuffPurchaseData)
+
+	if (msg) {
+		buffPurchaseData.value = processData(msg.data.data)
+		message.success(msg.data.message)
+	}
+}
+
+function goBack() {
+	router.back()
 }
 
 defineExpose({
@@ -89,19 +107,6 @@ defineExpose({
 				sub-title="This is a subtitle"
 				@back="goBack()"
 			/>
-			<!-- <section class="breadCrumbPanel bg2">
-                <a-breadcrumb :routes="routes">
-                    <template #itemRender="{ route, params, routes, paths }">
-                        <span
-                            v-if="routes.indexOf(route) === routes.length - 1"
-                            >{{ route.breadcrumbName }}</span
-                        >
-                        <router-link v-else :to="paths.join('/')">{{
-                            route.breadcrumbName
-                        }}</router-link>
-                    </template>
-                </a-breadcrumb>
-            </section> -->
 
 			<a-tabs v-model:activeKey="tabActiveKey" size="large" centered>
 				<a-tab-pane key="1" tab="Steam Purchases">
@@ -157,50 +162,7 @@ defineExpose({
 
 <script lang="ts">
 export default {
-	methods: {
-		async getSteamPurchases() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/getSteamPurchases')
-
-			if (msg) {
-				console.log('msg', msg)
-				this.steamPurchaseData = this.processData(msg.data.data)
-				message.success(msg.data.message)
-			}
-		},
-
-		async getBuffPurchases() {
-			const [err, msg] = await errorCaptured(postActionLocal, '/getBuffPurchases')
-
-			if (msg) {
-				console.log('msg', msg)
-				this.buffPurchaseData = this.processData(msg.data.data)
-				message.success(msg.data.message)
-			}
-		},
-
-		/*------*/
-		processData(payload) {
-			console.log('payload', payload)
-			const newData: IPurchaseData[] = []
-			for (let i = 0; i < payload.length; i++) {
-				const data = payload[i]
-				newData.push({
-					key: i.toString(),
-					name: data.goods_name,
-					buff_price: new Number(data.buff_price).toFixed(2),
-					steam_price: new Number(data.steam_price).toFixed(2),
-					self_buy_num: data.buy_num,
-					buy_time: data.buy_time,
-				})
-			}
-
-			return newData
-		},
-
-		goBack() {
-			this.$router.back()
-		},
-	},
+	methods: {},
 }
 </script>
 

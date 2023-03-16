@@ -1,5 +1,5 @@
 import { message as Message } from 'ant-design-vue'
-import type { Ref, ToRef } from 'vue'
+import type { Ref } from 'vue'
 import type { Dayjs } from 'dayjs'
 
 import {
@@ -30,24 +30,24 @@ interface ICrawlerCtrlReturn {
 	token: Ref<string>
 	buffData: Ref<TProcessedBuffData[]>
 	statisticalTime: Ref<Dayjs | undefined>
-	startBuffCrawlerByPage: Function
-	stopBuffCrawler: Function
-	clearBuffData: Function
-	gatherBuffData: Function
-	reverseBuff: Function
-	actBuffHistoryPrices: Function
-	stopBuffHistoryPrices: Function
-	fetchHistoryBuffData: Function
-	saveServerCacheHistoryPrice: Function
-	startRefererBuff: Function
-	stopRefererBuff: Function
-	gatherRefererBuff: Function
-	clearRefererBuff: Function
-	updateLogInfo: Function
-	saveServerCacheData: Function
-	saveSteamPurchaseData: Function
-	saveBuffPurchaseData: Function
-	test: Function
+	startBuffCrawlerByPage: (start: number, end: number) => Promise<void>
+	stopBuffCrawler: () => Promise<void>
+	clearBuffData: () => Promise<void>
+	gatherBuffData: () => Promise<TProcessedBuffData[]>
+	reverseBuff: () => void
+	actBuffHistoryPrices: () => Promise<void>
+	stopBuffHistoryPrices: () => Promise<void>
+	fetchHistoryBuffData: () => Promise<TProcessedBuffData[]>
+	saveServerCacheHistoryPrice: (time: Dayjs | undefined) => Promise<void>
+	startRefererBuff: (referer: string, offsetCount: number, limitCount: number) => Promise<void>
+	stopRefererBuff: () => Promise<void>
+	gatherRefererBuff: () => Promise<void>
+	clearRefererBuff: () => Promise<void>
+	updateLogInfo: (tokenValue: string) => Promise<void>
+	saveServerCacheData: () => Promise<void>
+	saveSteamPurchaseData: (goods: TProcessedBuffData[]) => Promise<void>
+	saveBuffPurchaseData: (goods: TProcessedBuffData[]) => Promise<void>
+	test: () => void
 }
 
 //处理buff数据
@@ -389,7 +389,7 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 	}
 
 	//存储steam购买记录
-	const saveSteamPurchaseData = async (goods: any[]): Promise<void> => {
+	const saveSteamPurchaseData = async (goods: TProcessedBuffData[]): Promise<void> => {
 		if (goods.length < 1) {
 			return
 		}
