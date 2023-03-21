@@ -9,7 +9,7 @@ import { useSocketIO } from '@renderer/hooks/use_socketio'
 
 type TUseCrawlerServerReturn = {
 	servePath: Ref<string>
-	serverStatus: Ref<string>
+	serverStatus: Ref<'default' | 'error' | 'success' | 'warning' | 'processing'>
 	serverStatusText: Ref<string>
 	serverStartTime: Ref<string>
 	serverEndTime: Ref<string>
@@ -24,7 +24,7 @@ type TUseCrawlerServerReturn = {
 const useCrawlerServer = (): TUseCrawlerServerReturn => {
 	const servePath = ref<string>(EnvEnum.servicePath)
 	const { socket } = useSocketIO(EnvEnum.socketUrl)
-	const serverStatus = ref<string>('default')
+	const serverStatus = ref<'default' | 'error' | 'success' | 'warning' | 'processing'>('default')
 	const serverStatusText = ref<string>('closed')
 	const serverStartTime = ref<string>('')
 	const serverEndTime = ref<string>('')
