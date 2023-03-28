@@ -374,6 +374,7 @@ function resetTransferStyle(params): object {
 
 				<a-space style="flex-wrap: wrap">
 					<a-button @click="confirmAction(startRefererBuff, 'sticker')">启动REFERER BUFF爬虫_印花</a-button>
+					<a-button @click="confirmAction(startRefererBuff, '2022')">启动REFERER BUFF爬虫_2022印花</a-button>
 					<a-button @click="confirmAction(startRefererBuff, 'major')">启动REFERER BUFF爬虫</a-button>
 				</a-space>
 
