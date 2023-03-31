@@ -27,6 +27,7 @@ interface ICrawlerCtrlReturn {
 	endPage: Ref<number>
 	offset: Ref<number>
 	limit: Ref<number>
+	searchString: Ref<string>
 	token: Ref<string>
 	buffData: Ref<TProcessedBuffData[]>
 	statisticalTime: Ref<Dayjs | undefined>
@@ -85,6 +86,7 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 	//Referer Buff查询参数
 	let offset = ref<number>(1)
 	let limit = ref<number>(1000)
+	let searchString = ref<string>('')
 	let token = ref<string>('')
 
 	let buffData = ref<TProcessedBuffData[]>([])
@@ -252,6 +254,7 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 			offset: offsetCount,
 			limit: limitCount,
 			referer,
+			substring: searchString.value,
 		}
 
 		const [err, result] = await errorCaptured(startBuffRefererCrawlerLoop, params)
@@ -446,6 +449,7 @@ const useCrawlerCtrl = (): ICrawlerCtrlReturn => {
 		endPage,
 		offset,
 		limit,
+		searchString,
 		token,
 		buffData,
 		statisticalTime,

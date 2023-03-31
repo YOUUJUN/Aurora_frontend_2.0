@@ -14,6 +14,7 @@ const {
 	endPage,
 	offset,
 	limit,
+	searchString,
 	token,
 	buffData,
 	statisticalTime,
@@ -370,11 +371,15 @@ function resetTransferStyle(params): object {
 				<a-space style="flex-wrap: wrap">
 					<a-input-number v-model:value="offset" addon-before="offset" min="0" step="100" />
 					<a-input-number v-model:value="limit" addon-before="limit" min="1" step="150" />
+					<a-input v-model:value="searchString" placeholder="搜索substring" />
 				</a-space>
 
 				<a-space style="flex-wrap: wrap">
 					<a-button @click="confirmAction(startRefererBuff, 'sticker')">启动REFERER BUFF爬虫_印花</a-button>
 					<a-button @click="confirmAction(startRefererBuff, '2022')">启动REFERER BUFF爬虫_2022印花</a-button>
+					<a-button @click="confirmAction(startRefererBuff, 'custom')">
+						启动REFERER BUFF爬虫 substring
+					</a-button>
 					<a-button @click="confirmAction(startRefererBuff, 'major')">启动REFERER BUFF爬虫</a-button>
 				</a-space>
 
