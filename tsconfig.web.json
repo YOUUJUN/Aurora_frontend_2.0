@@ -29,5 +29,6 @@
     "isolatedModules": true, // 将每个文件做为单独的模块 （与 'ts.transpileModule' 类似）.
     "noUnusedParameters": false,
     "noUnusedLocals" : false,
+    "noImplicitThis": false,                // 当 this 表达式值为 any 类型的时候，生成一个错误
   }
 }
